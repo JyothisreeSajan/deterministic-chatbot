@@ -16,8 +16,16 @@
 #   3. SPARROW/APAR  (implemented)
 #
 # APIs used:
-#   GET  /api/user/private/v1/read/{user_id}   (eHRMS ID at profileDetails.additionalProperties.externalSystemId)
-#   POST /api/private/user/v1/search            (via _mdo_admin_lookup — MDO admin details)
+#   eHRMS section:
+#     POST /api/private/user/v1/search                                  — eHRMS ID + External System Name, org/channel, rootOrgId
+#     POST /api/private/user/v1/search   (via _mdo_admin_lookup)         — MDO admin details when eHRMS ID/Ext. System Name missing
+#
+#   SPARROW/APAR section:
+#     POST /api/private/user/v1/search                                  — basic profile (org, channel, verification status)
+#     GET  /api/user/private/v1/read/{user_id}                          — full profile (designation, group, cadre/service/batch/central deputation)
+#     POST /api/supportportal/admin/user/v2/assignedcourses/{user_id}   — assigned CAP courses (courseCategory: "Comprehensive Assessment Program")
+#     GET  /api/supportportal/cbplan/v2/admin/user/list/{user_id}       — CBP Plans (each flagged isApar true/false; APAR picker filters on this)
+#     POST /api/course/private/v4/user/enrollment/list/{user_id}        — completed courses, to verify the selected course is actually done
 #
 # Field note: 'externalSystem' is the assumed key for External System Name under
 #   additionalProperties. Verify against live API before deploying.
@@ -798,7 +806,7 @@ nodes:
         Please refer to the video guide below for instructions on how to fetch iGOT training data into SPARROW APAR:
     action_button:
       label: "📹 How to Fetch iGOT Training Data into SPARROW APAR"
-      url: "https://tarento-my.sharepoint.com/personal/soniya_chugh_tarento_com/_layouts/15/stream.aspx?id=%2Fpersonal%2Fsoniya%5Fchugh%5Ftarento%5Fcom%2FDocuments%2FMicrosoft%20Teams%20Chat%20Files%2FHow%20to%20Fetch%20iGOT%20Training%20Data%20into%20SPARROW%20APAR%5FV8%201%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E4cd905b0%2Da0b7%2D40cc%2Dbc5b%2D7818d1639509&ga=1"
+      url: "https://www.youtube.com/embed/gSMSuFib2n8?si=kJI0a1jLZWJ0jqSD"
     next: satisfied
 
   # Step 4.3 — APAR/CAP not assigned + MDO found → show MDO details

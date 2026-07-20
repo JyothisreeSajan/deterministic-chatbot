@@ -99,7 +99,7 @@ nodes:
   - id: mobile_desktop_mode_guidance
     type: resolution
     prompt:
-      text: "Let's try using Desktop Mode on your mobile browser."
+      text: "Please try using Desktop Mode on your mobile browser."
     steps:
       - "Open **Google Chrome** browser on the mobile device."
       - "Click on the **three dots** at the top right corner of the browser."

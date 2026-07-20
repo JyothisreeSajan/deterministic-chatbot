@@ -149,7 +149,7 @@ nodes:
       text: |
         The **Display Name / Username** shown next to your profile name is **system-generated** and **cannot be manually updated** at this time.
 
-        We appreciate your understanding. Let me know if you have any other profile concern!
+        We appreciate your understanding. Please let us know if you have any other profile concern.
     next: satisfied
 
   # ═══════════════════════════════════════════════════════════════════════════
@@ -416,7 +416,7 @@ nodes:
   - id: email_mobile_multiple_account
     type: message
     prompt:
-      text: "Taking you to the **Multiple Account / Email Conflict** section…"
+      text: "Redirecting you to the **Multiple Account / Email Conflict** section."
     next: ask_identifier_type
 
   # §4a  MULTIPLE ACCOUNT — EMAIL / MOBILE CONFLICT
@@ -440,7 +440,7 @@ nodes:
   - id: fetch_mdo_for_email
     type: message
     prompt:
-      text: "Let me find your MDO's contact details..."
+      text: "Finding your MDO's contact details..."
     next: fetch_root_org_for_email
 
   - id: fetch_root_org_for_email
@@ -665,7 +665,7 @@ nodes:
   - id: fetch_mdo_for_ehrms
     type: message
     prompt:
-      text: "Let me find your MDO's contact details..."
+      text: "Finding your MDO's contact details..."
     next: fetch_root_org_for_ehrms
 
   - id: fetch_root_org_for_ehrms
@@ -740,7 +740,7 @@ nodes:
   - id: checking_profile_for_retirement
     type: message
     prompt:
-      text: "Let me check your profile to see if your EHRMS ID is set..."
+      text: "Checking your profile to see if your EHRMS ID is set..."
     next: fetch_user_profile_retirement
 
   - id: fetch_user_profile_retirement
@@ -788,7 +788,7 @@ nodes:
   - id: fetch_mdo_for_retirement
     type: message
     prompt:
-      text: "Let me find your MDO's contact details..."
+      text: "Finding your MDO's contact details..."
     next: fetch_root_org_for_retirement
 
   - id: fetch_root_org_for_retirement
@@ -1038,7 +1038,7 @@ nodes:
   - id: svc_history_edit_branch
     type: message
     prompt:
-      text: "Let me check your profile details..."
+      text: "Checking your profile details..."
     next: fetch_user_for_svc_history
 
   - id: fetch_user_for_svc_history
@@ -1275,7 +1275,7 @@ nodes:
   - id: already_complete
     type: message
     prompt:
-      text: "Good news — your profile is already at **100%**! 🎉 Nothing more to do here."
+      text: "Your profile is already at **100%** complete. No further action is needed."
     next: satisfied
 
   - id: show_missing_summary
@@ -1331,7 +1331,7 @@ nodes:
       - "Requirements: ≤ **1 MB**, ≤ **180 × 180 pixels**."
       - "Click **Apply Changes** → **Save Changes**."
     follow_up:
-      text: "Done?"
+      text: "Has this been completed?"
       quick_replies:
         - { id: yes,   label: "✅ Yes, updated" }
         - { id: more,  label: "❌ Another field is missing" }
@@ -1349,7 +1349,7 @@ nodes:
       - "Requirements: ≤ **200 KB**, ≤ **1200 × 300 pixels**."
       - "Click **Apply Changes**."
     follow_up:
-      text: "Done?"
+      text: "Has this been completed?"
       quick_replies:
         - { id: yes,   label: "✅ Yes" }
         - { id: more,  label: "❌ Another field" }
@@ -1427,7 +1427,7 @@ nodes:
       - "Write a short introduction (at least 30 characters)."
       - "Click **Save**."
     follow_up:
-      text: "Done?"
+      text: "Has this been completed?"
       quick_replies:
         - { id: yes,   label: "✅ Yes" }
         - { id: more,  label: "❌ Another field" }
@@ -1444,7 +1444,7 @@ nodes:
       - "Select your **Group** from the dropdown."
       - "Click **Save**."
     follow_up:
-      text: "Done?"
+      text: "Has this been completed?"
       quick_replies:
         - { id: yes,   label: "✅ Yes" }
         - { id: more,  label: "❌ Another field" }
@@ -1461,7 +1461,7 @@ nodes:
       - "Search for your designation in full form (e.g. Section Officer)."
       - "Select the matching designation and click **Save**."
     follow_up:
-      text: "Did that work?"
+      text: "Has this resolved the issue?"
       quick_replies:
         - { id: yes,  label: "✅ Designation set" }
         - { id: more, label: "❌ Another field missing" }
@@ -1635,7 +1635,7 @@ nodes:
   - id: ask_reclassify
     type: message
     prompt:
-      text: "Let me try again. What specifically is still not working?"
+      text: "Could you please specify what is still not working?"
     quick_replies:
       - { id: photo,   label: "Photo upload fails" }
       - { id: save,    label: "Save button not working" }
@@ -1678,7 +1678,7 @@ nodes:
   - id: escalate_api_error
     type: message
     prompt:
-      text: "I couldn't fetch your profile data right now. Let me raise a ticket so the team can investigate."
+      text: "We couldn't fetch your profile data right now. We will raise a ticket so the team can investigate."
     next: transfer_to_llm
 
   # terminal nodes (satisfied, ticket_raised_end) are injected from _terminal fragment

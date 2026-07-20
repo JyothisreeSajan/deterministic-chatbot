@@ -69,7 +69,6 @@ curl -X POST \
 | `response.content[0].organisations[0].organisationId` | `collected.profile_root_org_id` | Current org ID (fallback) |
 | `response.content[0].channel` | `collected.user_channel` / `collected.org_channel` | Used for YP/SPOC lookup key |
 | `response.content[0].rootOrgId` | `collected.root_org_id` | User's root org |
-| `response.content[0].profileStatus` | `collected.profile_status` | Profile status |
 
 ### Decision After Step 1
 
@@ -77,8 +76,9 @@ curl -X POST \
 |---|---|
 | `user_found_count == 0` | User not found; show support email; no further API calls |
 | `wf_transfer_id` is present and non-empty | `matched = true`; proceed to Step 2 (Path A) |
-| `wf_transfer_id` is absent/empty AND `profile_status.upper() == "VERIFIED"` | User's profile is still verified with their org — not actually revoked; show "access is active" message instead of transfer guidance |
-| `wf_transfer_id` is absent/empty AND `profile_status` is not `"VERIFIED"` | No transfer request raised; guide user to raise one (Path B) |
+| `wf_transfer_id` is absent/empty | No transfer request raised; guide user to raise one (Path B) |
+
+> `wf_transfer_id` presence is the sole signal used to determine Path A. `profileStatus` is not used in this decision, since it can read `VERIFIED` even while a transfer request is pending.
 
 ---
 

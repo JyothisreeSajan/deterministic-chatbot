@@ -297,7 +297,7 @@ nodes:
     type: resolution
     prompt:
       text: |
-        Good news — you're eligible for this moderated course.
+        You are eligible for this moderated course.
 
         📘 **Course Name:** {{ ctx.collected.course_name_found }}
 

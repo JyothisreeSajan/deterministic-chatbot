@@ -77,7 +77,7 @@ nodes:
   - id: ask_certificate_issue
     type: message
     prompt:
-      text:  "What's the issue with your certificate?"
+      text:  "Please select the issue you are experiencing with your certificate:"
       voice: "Tell me what's wrong with your certificate. Press 1 or 2."
     quick_replies:
       - { id: C1, label: "Certificate not generated / not received", icon: "🎓" }
@@ -605,7 +605,7 @@ nodes:
     type: message
     prompt:
       text: |
-        No problem.
+        Understood.
 
         If you decide to update your profile name in the future, you can follow the steps below and re-download the certificate.
 
@@ -629,7 +629,7 @@ nodes:
   - id: resolution_generic
     type: resolution
     prompt:
-      text: "Let me give you some general guidance for certificate issues:"
+      text: "Here is some general guidance for certificate issues:"
     steps:
       - "Log out of iGOT and log back in."
       - "Try using a different browser or clearing your browser cache."

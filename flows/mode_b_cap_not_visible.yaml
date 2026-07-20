@@ -398,7 +398,7 @@ nodes:
       text: |
         Thank you for your confirmation.
 
-        We wish you the best for your assessment! 🎯
+        We hope your assessment goes well.
     next: share_cap_link
 
   - id: share_cap_link

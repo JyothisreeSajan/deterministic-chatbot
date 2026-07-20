@@ -91,8 +91,6 @@ nodes:
       - { from: "$.response.content[0].channel",                          to: collected.user_channel }
       - { from: "$.response.content[0].channel",                          to: collected.org_channel }
       - { from: "$.response.content[0].rootOrgId",                        to: collected.root_org_id }
-      # Verification status — nested under profileDetails, not top-level
-      - { from: "$.response.content[0].profileDetails.profileStatus",      to: collected.profile_status }
     on_success: branch_on_transfer_status
     on_error:
       any: escalate_api_error
@@ -101,22 +99,11 @@ nodes:
     type: branch
     rules:
       - { if: "ctx.collected.user_found_count == 0", then: user_not_found_fallback }
-      # "Not My User" check — if the account is already verified, access was
-      # never actually revoked; skip the transfer-request flow entirely.
-      - { if: "(ctx.collected.profile_status or '').upper() == 'VERIFIED'",
-          then: account_already_verified }
       # SOP Step 2.2: If Transfer Request is Already Raised
       - { if: "ctx.collected.wf_transfer_id != None and ctx.collected.wf_transfer_id != ''",
           then: fetch_org_details }
     # SOP Step 4: If Transfer Request is NOT Raised
     default: guide_raise_transfer
-
-  - id: account_already_verified
-    type: message
-    prompt:
-      text: |
-        We checked your profile, and the account is already verified with **{{ ctx.collected.profile_org_name or ctx.collected.org_channel or "your organization" }}**.
-    next: satisfied
 
   # Fetch organization details using org API (in case orgName is missing from transfer request)
   - id: fetch_org_details

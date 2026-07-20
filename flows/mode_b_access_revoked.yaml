@@ -580,7 +580,7 @@ nodes:
     type: resolution
     prompt:
       text: |
-        ✅ **Organization Found!**
+        ✅ **Organization Found**
 
         We found your organization in the system.
     steps:

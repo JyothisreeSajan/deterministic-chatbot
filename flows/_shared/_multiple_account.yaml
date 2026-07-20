@@ -398,7 +398,7 @@ nodes:
     type: message
     prompt:
       text: |
-        The **{{ ctx.collected.new_identifier }}** you provided is already the active {{ 'Email ID' if ctx.collected.update_type == 'EMAIL' else 'Mobile Number' }} on your current account!
+        The **{{ ctx.collected.new_identifier }}** you provided is already the active {{ 'Email ID' if ctx.collected.update_type == 'EMAIL' else 'Mobile Number' }} on your current account.
 
         Would you like to try entering a different {{ 'Email ID' if ctx.collected.update_type == 'EMAIL' else 'Mobile Number' }}, or would you like to proceed?
     quick_replies:
@@ -607,7 +607,7 @@ nodes:
     type: message
     prompt:
       text: |
-        No problem. Let's start over.
+        Understood. Let us start over.
 
         Please share the **Email ID or Mobile Number** you wish to update.
     next: ask_identifier_type

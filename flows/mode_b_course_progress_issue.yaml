@@ -224,7 +224,7 @@ nodes:
     type: message
     prompt:
       text: |
-        Your certificate for **{{ ctx.collected.course_name }}** has already been generated. 🎉
+        Your certificate for **{{ ctx.collected.course_name }}** has already been generated.
 
         Please check your profile under the **Certificates** section.
     next: satisfied
@@ -1056,7 +1056,7 @@ nodes:
     type: message
     prompt:
       text: |
-        Your certificate has been generated successfully. 🎉
+        Your certificate has been generated successfully.
 
         Please check your profile under the **Certificates** section.
     next: satisfied
@@ -1188,9 +1188,9 @@ nodes:
     type: message
     prompt:
       text: |
-        That's great! 🎉
+        Thank you for confirming.
 
-        Please remember: the course must be **100% complete** for the certificate to be generated automatically.
+        Please note: the course must be **100% complete** for the certificate to be generated automatically.
 
         Once all mandatory resources are completed successfully, the certificate will be generated.
 
@@ -1201,7 +1201,7 @@ nodes:
     type: message
     prompt:
       text: |
-        No problem! Please complete the pending resource(s) at your convenience.
+        Understood. Please complete the pending resource(s) at your convenience.
 
         **Important:** Please complete all pending resources to achieve **100% completion**. Once all mandatory resources are completed successfully, the certificate will be generated automatically.
 

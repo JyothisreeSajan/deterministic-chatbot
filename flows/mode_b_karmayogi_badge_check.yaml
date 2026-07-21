@@ -236,8 +236,10 @@ nodes:
         Your designation/group verification request has already been submitted and is awaiting approval from the Organization Admin.
 
         Please contact the below admin for further assistance:
-        Admin Name: {{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}
-        Admin Email ID: {{ ctx.collected.mdo_leader_email or ctx.collected.mdo_leader_email_fallback }}
+
+        - **Admin Name:** {{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}
+
+        - **Admin Email ID:** {{ ctx.collected.mdo_leader_email or ctx.collected.mdo_leader_email_fallback }}
     next: satisfied
 
   # ---------------------------------------------------------------------------
@@ -255,8 +257,10 @@ nodes:
         Your designation/group verification request has already been submitted. However, there is currently no Organization Admin available to approve the request.
 
         Please connect with the concerned YP for further assistance.
-        YP Name: {{ ctx.collected.yp_name }}
-        YP Email ID: {{ ctx.collected.yp_email }}
+
+        - **YP Name:** {{ ctx.collected.yp_name }}
+
+        - **YP Email ID:** {{ ctx.collected.yp_email }}
     next: satisfied
 
   - id: yp_not_found

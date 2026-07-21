@@ -8,7 +8,8 @@
 #
 # Execution order (per API doc):
 #   STEP 1  POST /private/user/v1/search
-#             → reads wfTransferRequest; determines has_pending_request
+#             → reads wfTransferRequest, wfProfileDesignationRequest, wfProfileGroupRequest;
+#               determines has_pending_request
 #             → if pending   → STEP 2
 #             → if not found → guide submission steps (no further API call)
 #             → API error    → error message
@@ -92,6 +93,10 @@ nodes:
     response_mapping:
       - { from: "$.response.content[0].wfTransferRequest.wfId",                                    to: collected.wf_id }
       - { from: "$.response.content[0].wfTransferRequest.departmentName",                          to: collected.transfer_dept_name }
+      - { from: "$.response.content[0].wfProfileDesignationRequest.wfId",                          to: collected.designation_wf_id }
+      - { from: "$.response.content[0].wfProfileDesignationRequest.departmentName",                to: collected.designation_dept_name }
+      - { from: "$.response.content[0].wfProfileGroupRequest.wfId",                                to: collected.group_wf_id }
+      - { from: "$.response.content[0].wfProfileGroupRequest.departmentName",                      to: collected.group_dept_name }
       - { from: "$.response.content[0].channel",                                                   to: collected.org_channel }
       - { from: "$.response.content[0].rootOrgId",                                                 to: collected.root_org_id }
       - { from: "$.response.content[0].profileDetails.profileDesignationStatus",                   to: collected.designation_status }
@@ -123,7 +128,8 @@ nodes:
   #     - Group / Designation / Department details are present
   #       (current_dept_name falls back to channel per API doc note, since
   #       professionalDetails[0].name is not always present)
-  #     - no pending verification/transfer request (wf_id absent)
+  #     - no pending verification/transfer request (wf_id, designation_wf_id,
+  #       group_wf_id all absent)
   # ===========================================================================
 
   - id: branch_on_verified_status
@@ -141,7 +147,9 @@ nodes:
           (ctx.collected.current_dept_name != None and ctx.collected.current_dept_name != '') or
           (ctx.collected.org_channel != None and ctx.collected.org_channel != '')
           ) and
-          (ctx.collected.wf_id == None or ctx.collected.wf_id == '')
+          (ctx.collected.wf_id == None or ctx.collected.wf_id == '') and
+          (ctx.collected.designation_wf_id == None or ctx.collected.designation_wf_id == '') and
+          (ctx.collected.group_wf_id == None or ctx.collected.group_wf_id == '')
         then: show_already_verified
     default: branch_on_pending_request
 
@@ -160,17 +168,25 @@ nodes:
     next: satisfied
 
   # ===========================================================================
-  # Branch — does a pending transfer/transfer request exist?
-  # Decision: wfId present OR departmentName present → has_pending_request = true
+  # Branch — does a pending transfer / designation / group request exist?
+  # Decision: any wfId or departmentName present across wfTransferRequest,
+  # wfProfileDesignationRequest, wfProfileGroupRequest → has_pending_request = true
   # ===========================================================================
 
   - id: branch_on_pending_request
     type: branch
     rules:
-      - if: "(ctx.collected.wf_id != None and ctx.collected.wf_id != '') or (ctx.collected.transfer_dept_name != None and ctx.collected.transfer_dept_name != '')"
+      - if: >
+          (ctx.collected.wf_id != None and ctx.collected.wf_id != '') or
+          (ctx.collected.transfer_dept_name != None and ctx.collected.transfer_dept_name != '') or
+          (ctx.collected.designation_wf_id != None and ctx.collected.designation_wf_id != '') or
+          (ctx.collected.designation_dept_name != None and ctx.collected.designation_dept_name != '') or
+          (ctx.collected.group_wf_id != None and ctx.collected.group_wf_id != '') or
+          (ctx.collected.group_dept_name != None and ctx.collected.group_dept_name != '')
         then: lookup_mdo_leader
     default: show_submission_steps
-    # No wfTransferRequest → guide user to submit; no further API call
+    # No wfTransferRequest / wfProfileDesignationRequest / wfProfileGroupRequest
+    # → guide user to submit; no further API call
 
   # ===========================================================================
   # STEP 2 — POST /private/user/v1/search
@@ -188,7 +204,7 @@ nodes:
         request:
           query: ""
           filters:
-            channel: "{{ ctx.collected.transfer_dept_name }}"
+            channel: "{{ ctx.collected.transfer_dept_name or ctx.collected.designation_dept_name or ctx.collected.group_dept_name }}"
             organisations.roles: ["MDO_ADMIN"]
             status: 1
           limit: 1

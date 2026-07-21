@@ -1364,6 +1364,9 @@ def _build_user_eligibility_ctx(response: Any) -> dict:
         # Additional fields for moderated course secureSettings check
         # profile_status: compared against secureSettings.isVerifiedKarmayogi
         "profile_status":      profile_details.get("profileStatus"),
+        # 'profilestatus' is an alias — Access Settings criteriaKey sends it
+        # unseparated/lowercase, so store it under that exact key too.
+        "profilestatus":       profile_details.get("profileStatus"),
         # ministry_or_state_id: the org/ministry ID — same value as rootOrgId on the
         # Karmayogi platform; stored separately to match against secureSettings.organisation
         "ministry_or_state_id": profile_details.get("ministryOrStateId") or response.get("rootOrgId"),

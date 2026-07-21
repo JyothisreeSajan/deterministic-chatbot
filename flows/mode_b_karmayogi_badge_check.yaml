@@ -8,7 +8,7 @@
 #
 # Execution order (per API doc):
 #   STEP 1  POST /private/user/v1/search
-#             → reads wfTransferRequest, wfProfileDesignationRequest, wfProfileGroupRequest;
+#             → reads wfProfileDesignationRequest, wfProfileGroupRequest;
 #               determines has_pending_request
 #             → if pending   → STEP 2
 #             → if not found → guide submission steps (no further API call)
@@ -26,7 +26,8 @@
 #             → YP not found → generic message
 #
 # SOP sub-scenarios §1.1–§1.4 are handled by asking the user after submission
-# steps and re-reading the private profile to recheck wfTransferRequest.
+# steps and re-reading the private profile to recheck wfProfileDesignationRequest /
+# wfProfileGroupRequest.
 #
 # In-memory service:
 #   yp_lookup  (_yp_lookup — Excel-backed YP/SPOC contact by org_channel)
@@ -76,7 +77,8 @@ nodes:
 
   # ===========================================================================
   # STEP 1 — POST /private/user/v1/search
-  #           Fetch private profile to read wfTransferRequest
+  #           Fetch private profile to read wfProfileDesignationRequest /
+  #           wfProfileGroupRequest
   # ===========================================================================
 
   - id: fetch_private_profile
@@ -91,8 +93,6 @@ nodes:
             userId: "{{ ctx.user_id_hash }}"
           limit: 1
     response_mapping:
-      - { from: "$.response.content[0].wfTransferRequest.wfId",                                    to: collected.wf_id }
-      - { from: "$.response.content[0].wfTransferRequest.departmentName",                          to: collected.transfer_dept_name }
       - { from: "$.response.content[0].wfProfileDesignationRequest.wfId",                          to: collected.designation_wf_id }
       - { from: "$.response.content[0].wfProfileDesignationRequest.departmentName",                to: collected.designation_dept_name }
       - { from: "$.response.content[0].wfProfileGroupRequest.wfId",                                to: collected.group_wf_id }
@@ -127,8 +127,8 @@ nodes:
   #     - Group / Designation / Department details are present
   #       (current_dept_name falls back to channel per API doc note, since
   #       professionalDetails[0].name is not always present)
-  #     - no pending verification/transfer request (wf_id, designation_wf_id,
-  #       group_wf_id all absent)
+  #     - no pending verification request (designation_wf_id, group_wf_id
+  #       both absent)
   # ===========================================================================
 
   - id: branch_on_verified_status
@@ -146,7 +146,6 @@ nodes:
           (ctx.collected.current_dept_name != None and ctx.collected.current_dept_name != '') or
           (ctx.collected.org_channel != None and ctx.collected.org_channel != '')
           ) and
-          (ctx.collected.wf_id == None or ctx.collected.wf_id == '') and
           (ctx.collected.designation_wf_id == None or ctx.collected.designation_wf_id == '') and
           (ctx.collected.group_wf_id == None or ctx.collected.group_wf_id == '')
         then: show_already_verified
@@ -167,8 +166,8 @@ nodes:
     next: satisfied
 
   # ===========================================================================
-  # Branch — does a pending transfer / designation / group request exist?
-  # Decision: any wfId or departmentName present across wfTransferRequest,
+  # Branch — does a pending designation / group request exist?
+  # Decision: any wfId or departmentName present across
   # wfProfileDesignationRequest, wfProfileGroupRequest → has_pending_request = true
   # ===========================================================================
 
@@ -176,15 +175,13 @@ nodes:
     type: branch
     rules:
       - if: >
-          (ctx.collected.wf_id != None and ctx.collected.wf_id != '') or
-          (ctx.collected.transfer_dept_name != None and ctx.collected.transfer_dept_name != '') or
           (ctx.collected.designation_wf_id != None and ctx.collected.designation_wf_id != '') or
           (ctx.collected.designation_dept_name != None and ctx.collected.designation_dept_name != '') or
           (ctx.collected.group_wf_id != None and ctx.collected.group_wf_id != '') or
           (ctx.collected.group_dept_name != None and ctx.collected.group_dept_name != '')
         then: lookup_mdo_leader
     default: show_submission_steps
-    # No wfTransferRequest / wfProfileDesignationRequest / wfProfileGroupRequest
+    # No wfProfileDesignationRequest / wfProfileGroupRequest
     # → guide user to submit; no further API call
 
   # ===========================================================================
@@ -203,7 +200,7 @@ nodes:
         request:
           query: ""
           filters:
-            channel: "{{ ctx.collected.transfer_dept_name or ctx.collected.designation_dept_name or ctx.collected.group_dept_name }}"
+            channel: "{{ ctx.collected.designation_dept_name or ctx.collected.group_dept_name }}"
             organisations.roles: ["MDO_ADMIN"]
             status: 1
           limit: 1
@@ -236,11 +233,13 @@ nodes:
     type: message
     prompt:
       text: |
-        Your transfer request has already been submitted and is awaiting approval from the Organization Admin. 
-        
-        Please contact the below admin for further assistance: 
-        Admin Name: {{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}
-        Admin Email ID: {{ ctx.collected.mdo_leader_email or ctx.collected.mdo_leader_email_fallback }}
+        Your designation/group verification request has already been submitted and is awaiting approval from the Organization Admin.
+
+        Please contact the below admin for further assistance:
+
+        - **Admin Name:** {{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}
+
+        - **Admin Email ID:** {{ ctx.collected.mdo_leader_email or ctx.collected.mdo_leader_email_fallback }}
     next: satisfied
 
   # ---------------------------------------------------------------------------
@@ -255,18 +254,20 @@ nodes:
     type: message
     prompt:
       text: |
-        Your transfer request has already been submitted. However, there is currently no Organization Admin available to approve the request. 
-        
+        Your designation/group verification request has already been submitted. However, there is currently no Organization Admin available to approve the request.
+
         Please connect with the concerned YP for further assistance.
-        YP Name: {{ ctx.collected.yp_name }}
-        YP Email ID: {{ ctx.collected.yp_email }}
+
+        - **YP Name:** {{ ctx.collected.yp_name }}
+
+        - **YP Email ID:** {{ ctx.collected.yp_email }}
     next: satisfied
 
   - id: yp_not_found
     type: ticket_confirm
     prompt:
       text: |
-        We checked, and found that your transfer request has already been submitted, but there is currently no Organization Admin or YP contact available for your organization to assist with approval.
+        We checked, and found that your designation/group verification request has already been submitted, but there is currently no Organization Admin or YP contact available for your organization to assist with approval.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -279,7 +280,7 @@ nodes:
         **Issue Identified:** Designation / Group Verification — No Admin or YP Contact Found
 
         **Summary of Request:**
-        Your transfer request has already been submitted, but there is currently no Organization Admin available to approve it, and we could not locate a YP contact for your organization either. You would like us to investigate this further.
+        Your designation/group verification request has already been submitted, but there is currently no Organization Admin available to approve it, and we could not locate a YP contact for your organization either. You would like us to investigate this further.
 
         • **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 

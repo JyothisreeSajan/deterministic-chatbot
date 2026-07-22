@@ -126,8 +126,8 @@ nodes:
       text: |
         {% if ctx.collected.current_first_name %}
         Your current name on iGOT:
-        • **First Name:** {{ ctx.collected.current_first_name }}
-        • **Last Name:** {{ ctx.collected.pd_surname or ctx.collected.current_last_name or '(not set)' }}
+        - **First Name:** {{ ctx.collected.current_first_name }}
+        - **Last Name:** {{ ctx.collected.pd_surname or ctx.collected.current_last_name or '(not set)' }}
 
         {% endif %}
         Here's how to update your name on iGOT:
@@ -311,10 +311,10 @@ nodes:
         Please reach out to your MDO admin and request them to import the designation. Once imported through the MDO portal, it will be available for you to select.
 
         {% if ctx.collected.mdo_admin_name %}
-        • **MDO Name:** {{ ctx.collected.mdo_admin_name }}
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
         {% endif %}
         {% if ctx.collected.mdo_admin_email %}
-        • **MDO Email:** {{ ctx.collected.mdo_admin_email }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email }}
         {% endif %}
         {% if ctx.collected.mdo_admin_email %}
         Please send an email to **{{ ctx.collected.mdo_admin_email }}** requesting them to import the designation **{{ ctx.collected.designation_selected_name }}** into the MDO portal.
@@ -365,8 +365,8 @@ nodes:
         **Summary of Request:**
         You reported that your designation is not verified. You would like to request verification for the designation under the organisation.
 
-        • **Organisation:** {{ ctx.collected.designation_org_name }}
-        • **Designation (full form):** {{ ctx.collected.designation_requested }}
+        - **Organisation:** {{ ctx.collected.designation_org_name }}
+        - **Designation (full form):** {{ ctx.collected.designation_requested }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: raise_designation_ticket
@@ -488,22 +488,22 @@ nodes:
         {% if ctx.collected.mdo_admin_name or ctx.collected.mdo_admin_email %}
         Please contact your MDO admin who can perform the update on your behalf:
         {% if ctx.collected.mdo_admin_name %}
-        • **MDO Name:** {{ ctx.collected.mdo_admin_name }}
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
         {% endif %}
         {% if ctx.collected.mdo_admin_email %}
-        • **MDO Email:** {{ ctx.collected.mdo_admin_email }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email }}
         {% endif %}
         When contacting your MDO, please share:
         {% if ctx.collected.user_email %}
-        • Your registered **Email ID:** {{ ctx.collected.user_email }}
+        - Your registered **Email ID:** {{ ctx.collected.user_email }}
         {% endif %}
         {% if ctx.collected.user_mobile %}
-        • Your registered **Mobile:** {{ ctx.collected.user_mobile }}
+        - Your registered **Mobile:** {{ ctx.collected.user_mobile }}
         {% endif %}
         {% if not ctx.collected.user_email and not ctx.collected.user_mobile %}
-        • Your existing registered **Email ID / Mobile Number**
+        - Your existing registered **Email ID / Mobile Number**
         {% endif %}
-        • The **new Email ID / Mobile Number** you want updated
+        - The **new Email ID / Mobile Number** you want updated
         {% else %}
         Since the MDO Admin for your organisation isn't currently available in the system, we're unable to provide direct contact details.
         Please contact the **Young Professional (YP)** assigned to your state/department/organisation for further clarification.
@@ -649,9 +649,9 @@ nodes:
       text: "**Individual users cannot update the EHRMS ID directly.** Only your MDO / Nodal Officer can update this field."
     steps:
       - "Contact your **MDO / Nodal Officer** and share:"
-      - "• Your registered **Email ID**"
-      - "• Your registered **Mobile Number**"
-      - "• Your correct **EHRMS ID**"
+      - "- Your registered **Email ID**"
+      - "- Your registered **Mobile Number**"
+      - "- Your correct **EHRMS ID**"
       - "The MDO will update the External System ID in your profile."
     follow_up:
       text: "Would you like me to look up your MDO's contact details?"
@@ -711,23 +711,23 @@ nodes:
         {% if ctx.collected.mdo_admin_name or ctx.collected.mdo_admin_email %}
         Here are your MDO's contact details:
         {% if ctx.collected.mdo_admin_name %}
-        • **MDO Name:** {{ ctx.collected.mdo_admin_name }}
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
         {% endif %}
         {% if ctx.collected.mdo_admin_email %}
-        • **MDO Email:** {{ ctx.collected.mdo_admin_email }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email }}
         {% endif %}
         Please contact your MDO / Nodal Officer and share:
         {% if ctx.collected.user_email %}
-        • Your registered **Email ID:** {{ ctx.collected.user_email }}
+        - Your registered **Email ID:** {{ ctx.collected.user_email }}
         {% else %}
-        • Your registered **Email ID**
+        - Your registered **Email ID**
         {% endif %}
         {% if ctx.collected.user_mobile %}
-        • Your registered **Mobile Number:** {{ ctx.collected.user_mobile }}
+        - Your registered **Mobile Number:** {{ ctx.collected.user_mobile }}
         {% else %}
-        • Your registered **Mobile Number**
+        - Your registered **Mobile Number**
         {% endif %}
-        • Your correct **EHRMS ID**
+        - Your correct **EHRMS ID**
         {% else %}
         Since the MDO Admin for your organisation isn't currently available in the system, we're unable to provide direct contact details.
         Please contact the **Young Professional (YP)** assigned to your state/department/organisation for further clarification.
@@ -834,14 +834,14 @@ nodes:
         {% if ctx.collected.mdo_admin_name or ctx.collected.mdo_admin_email %}
         Here are your MDO's contact details:
         {% if ctx.collected.mdo_admin_name %}
-        • **MDO Name:** {{ ctx.collected.mdo_admin_name }}
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
         {% endif %}
         {% if ctx.collected.mdo_admin_email %}
-        • **MDO Email:** {{ ctx.collected.mdo_admin_email }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email }}
         {% endif %}
         Please reach out to your MDO / Nodal Officer and request them to:
-        • **Add your EHRMS ID** to your iGOT profile
-        • Ensure your **Date of Retirement** is correctly set in the EHRMS portal
+        - **Add your EHRMS ID** to your iGOT profile
+        - Ensure your **Date of Retirement** is correctly set in the EHRMS portal
 
         Once both are updated, the Date of Retirement will automatically reflect on iGOT.
         {% else %}
@@ -996,8 +996,8 @@ nodes:
         **Summary of Request:**
         You reported that the required service is currently unavailable. You would like to add the following:
 
-        • **Service Name:** {{ ctx.collected.service_requested }}
-        • **Cadre Controlling Authority:** {{ ctx.collected.service_cadre_authority }}
+        - **Service Name:** {{ ctx.collected.service_requested }}
+        - **Cadre Controlling Authority:** {{ ctx.collected.service_cadre_authority }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: raise_service_ticket
@@ -1061,8 +1061,8 @@ nodes:
     prompt:
       text: |
         Based on your profile, our records show:
-        • **Organisation:** {{ ctx.collected.svc_history_org or '(not set)' }}
-        • **Designation:** {{ ctx.collected.svc_designation or '(not set)' }}
+        - **Organisation:** {{ ctx.collected.svc_history_org or '(not set)' }}
+        - **Designation:** {{ ctx.collected.svc_designation or '(not set)' }}
 
         The service history entry is auto-populated from your current organisation and designation. Is this information correct?
     quick_replies:
@@ -1123,10 +1123,10 @@ nodes:
         {% if ctx.collected.mdo_admin_name or ctx.collected.mdo_admin_email %}
         Here are your MDO's contact details:
         {% if ctx.collected.mdo_admin_name %}
-        • **MDO Name:** {{ ctx.collected.mdo_admin_name }}
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
         {% endif %}
         {% if ctx.collected.mdo_admin_email %}
-        • **MDO Email:** {{ ctx.collected.mdo_admin_email }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email }}
         {% endif %}
         Please connect with your MDO if you need help with the approval.
         {% else %}
@@ -1145,10 +1145,10 @@ nodes:
       - "Click the **Plus (+)** icon."
       - |
         Enter the required details such as:
-          • **Organisation / Employment Name**
-          • **Start Date**
-          • **End Date**
-          • Other required fields
+          - **Organisation / Employment Name**
+          - **Start Date**
+          - **End Date**
+          - Other required fields
       - "Click **Save** to add the service history entry."
     next: satisfied
 
@@ -1285,22 +1285,22 @@ nodes:
         We've checked your profile and found that certain details are missing. Please update the following details to achieve 100% profile completion:
 
         {% if not ctx.collected.avatar_url %}
-        • **Profile Photo**
+        - **Profile Photo**
         {% endif %}
         {% if not ctx.collected.banner_url %}
-        • **Cover Photo**
+        - **Cover Photo**
         {% endif %}
         {% if ctx.collected.username_verified == 'False' or not ctx.collected.username_verified %}
-        • **Username Verification Tick**
+        - **Username Verification Tick**
         {% endif %}
         {% if not ctx.collected.about_me %}
-        • **About Me**
+        - **About Me**
         {% endif %}
         {% if ctx.collected.designation_status != 'VERIFIED' %}
-        • **Designation**
+        - **Designation**
         {% endif %}
         {% if ctx.collected.group_status != 'VERIFIED' %}
-        • **Group**
+        - **Group**
         {% endif %}
 
         The profile completion percentage will reach 100% only after all mandatory fields are updated. Please update the missing details in your profile to complete it to 100%. Which field would you like to fix first?
@@ -1407,10 +1407,10 @@ nodes:
 
         Here are your MDO's contact details:
         {% if ctx.collected.mdo_admin_name %}
-        • **MDO Name:** {{ ctx.collected.mdo_admin_name }}
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
         {% endif %}
         {% if ctx.collected.mdo_admin_email %}
-        • **MDO Email:** {{ ctx.collected.mdo_admin_email }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email }}
         {% endif %}
         {% else %}
         Since the MDO Admin for your organisation isn't currently available in the system, we're unable to provide direct contact details.

@@ -366,13 +366,8 @@ nodes:
 
         Please connect with the YP/AM below for further assistance:
 
-        - **Name:** {{ ctx.collected.yp_name | default('—') }}
-
-        - **Email ID:** {{ ctx.collected.yp_email | default('—') }}
-        {%- if ctx.collected.yp_mobile %}
-
-        - **Contact Number:** {{ ctx.collected.yp_mobile }}
-        {%- endif %}
+        **Name:** {{ ctx.collected.yp_name | default('—') }}
+        **Email ID:** {{ ctx.collected.yp_email | default('—') }}
 
         Only APAR-assigned and successfully completed courses/assessments are reflected in SPARROW/APAR.
     next: satisfied

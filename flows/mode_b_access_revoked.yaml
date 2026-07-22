@@ -660,11 +660,10 @@ nodes:
       text: |
         ✅ **SPOC Details Found**
 
-        Please get in touch with the concerned YP/SPOC using the details below:
+        Please contact the YP/SPOC below for further assistance:
 
         - **Name:** {{ ctx.collected.yp_name or "YP Contact" }}
         - **Email:** {{ ctx.collected.yp_email or "N/A" }}
-        - **Mobile:** {{ ctx.collected.yp_mobile or "N/A" }}
     steps:
       - "Coordinate with the SPOC for the creation of an MDO Leader/Admin."
       - "Request approval-related support for your transfer request."
@@ -676,11 +675,10 @@ nodes:
       text: |
         ✅ **SPOC Details Found**
 
-        Please get in touch with the concerned YP/SPOC using the details below:
+        Please contact the YP/SPOC below for further assistance:
 
         - **Name:** {{ ctx.collected.yp_name or "YP Contact" }}
         - **Email:** {{ ctx.collected.yp_email or "N/A" }}
-        - **Mobile:** {{ ctx.collected.yp_mobile or "N/A" }}
     steps:
       - "Connect with the shared SPOC using the details above."
       - "Request the creation of your organization."

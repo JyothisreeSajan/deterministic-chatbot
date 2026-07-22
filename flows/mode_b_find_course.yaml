@@ -519,7 +519,6 @@ nodes:
 
         👤 **Name:** {{ ctx.collected.yp_name }}
         📧 **Email ID:** {{ ctx.collected.yp_email }}
-        📞 **Mobile:** {{ ctx.collected.yp_mobile }}
     steps: []
     next: satisfied
 

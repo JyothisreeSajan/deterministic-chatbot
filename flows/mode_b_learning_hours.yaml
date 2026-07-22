@@ -261,9 +261,11 @@ nodes:
 
         Please connect with the MDO below and request them to update your eHRMS ID:
 
-        **Organization:** {{ ctx.collected.org_channel | default('—') }}
-        **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
-        **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
+        - **Organization:** {{ ctx.collected.org_channel | default('—') }}
+
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
+
+        - **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
 
         Once the eHRMS ID is updated, it may take up to **24 hours** for the learning progress to reflect in eHRMS.
     next: satisfied
@@ -279,9 +281,11 @@ nodes:
 
         Please connect with the MDO below and request them to update the External System Name:
 
-        **Organization:** {{ ctx.collected.org_channel | default('—') }}
-        **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
-        **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
+        - **Organization:** {{ ctx.collected.org_channel | default('—') }}
+
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
+
+        - **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
 
         Once the External System Name is updated, it may take up to **24 hours** for the learning progress to reflect in eHRMS.
     next: satisfied
@@ -810,9 +814,11 @@ nodes:
 
         Training plans and APAR courses are assigned by the concerned authority. Please connect with the MDO below for further assistance:
 
-        **Organization:** {{ ctx.collected.org_channel | default('—') }}
-        **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
-        **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
+        - **Organization:** {{ ctx.collected.org_channel | default('—') }}
+
+        - **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
+
+        - **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
 
         Only APAR-assigned and successfully completed courses/assessments are reflected in SPARROW/APAR.
     next: satisfied

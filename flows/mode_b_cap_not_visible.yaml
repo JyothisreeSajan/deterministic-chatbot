@@ -632,8 +632,9 @@ nodes:
       text: |
         Please connect with the contact below for further assistance regarding CAP creation and assignment:
 
-        Name: **{{ ctx.collected.mdo_admin_name }}**
-        Email ID: **{{ ctx.collected.mdo_admin_email }}**
+        - **Name:** {{ ctx.collected.mdo_admin_name }}
+
+        - **Email ID:** {{ ctx.collected.mdo_admin_email }}
     next: satisfied
 
   - id: mdo_api_error
@@ -648,8 +649,9 @@ nodes:
       text: |
         Please connect with the contact below for further assistance regarding CAP creation and assignment:
 
-        Name: **{{ ctx.collected.yp_name }}**
-        Email ID: **{{ ctx.collected.yp_email }}**
+        - **Name:** {{ ctx.collected.yp_name }}
+
+        - **Email ID:** {{ ctx.collected.yp_email }}
     next: satisfied
 
   - id: yp_not_found

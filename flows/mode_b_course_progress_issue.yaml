@@ -862,15 +862,8 @@ nodes:
 
         {{ ctx.collected.scorm_resource_names }}
 
-        Please follow the instructions below carefully to complete the SCORM resource(s):
-
-        - Complete the resource in **one continuous session**.
-        - **Do not increase the playback speed** while viewing the content.
-        - Complete **at least 60% of the total duration** of the resource.
-        - **Do not switch browser tabs or move to another application** while the SCORM resource is playing, as doing so may interrupt progress tracking and prevent completion from being recorded.
-        - After completing the resource, click the **Next** button.
-
-        Progress will be updated only after the above steps are completed successfully.
+        Please note :
+        For SCROM resources  - Complete the resource in one continuous session without increasing the playback speed or switching to another browser tab or application during playback, as this may interrupt progress tracking. Ensure you complete at least 60% of the resource duration, and once finished, click the Next button to successfully record your completion.
     steps:
       - "Go to **Profile**."
       - "Open **My Learning**."

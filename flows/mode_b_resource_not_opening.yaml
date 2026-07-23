@@ -237,6 +237,18 @@ nodes:
         extra_fields:
           - { from: name,     to: collected.resource_name }
           - { from: mimeType, to: collected.resource_mime_type }
+      # Composite search can miss some known resource IDs (e.g. Draft/Retired
+      # status) and just silently drop them from $.content — which here means
+      # they'd never appear as a selectable option at all. For any ID present
+      # in all_resource_ids/all_child_ids but absent from the composite search
+      # result, fetch it individually via content/v1/read and add it in.
+      fallback_missing_ids:
+        ids_ctx_keys: ["collected.all_resource_ids", "collected.all_child_ids"]
+        read_path:   "/api/content/v1/read/{id}"
+        label_field: name
+        extra_fields:
+          - { from: name,     to: collected.resource_name }
+          - { from: mimeType, to: collected.resource_mime_type }
       search: { enabled: true, placeholder: "Search for a video or module name..." }
       pagination: { enabled: true, page_size: 15 }
       on_empty:   no_resources_found

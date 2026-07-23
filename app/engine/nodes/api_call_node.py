@@ -566,6 +566,33 @@ def _extract_all_names(names: Any) -> str:
     return "\n".join(f"- {n}" for n in clean)
 
 
+def _diff_missing_resource_ids(found_ids: Any, incomplete_ids: Any) -> list[str]:
+    """Return incomplete_ids not present in found_ids (composite search misses).
+
+    found_ids is $.content[*].identifier from the composite search response;
+    incomplete_ids is the full pending-resource list from the leaf-node diff.
+    Used to identify which resources need a one-by-one content/v1/read fallback
+    because the composite search didn't return their name.
+    """
+    found = {f for f in (found_ids if isinstance(found_ids, list) else []) if f}
+    incomplete = incomplete_ids if isinstance(incomplete_ids, list) else []
+    return [rid for rid in incomplete if rid not in found]
+
+
+def _append_resource_name(new_name: Any, existing_names: Any) -> str:
+    """Append one resource name (as a bullet line) onto the existing names string.
+
+    Used by the composite-search-fallback content/v1/read loop to add names
+    for resources the composite search missed, on top of whatever
+    extract_all_names already produced from the composite search response.
+    """
+    existing = existing_names if isinstance(existing_names, str) else ""
+    if not new_name:
+        return existing
+    line = f"- {new_name}"
+    return f"{existing}\n{line}" if existing else line
+
+
 _SCORM_MIME = "application/vnd.ekstep.html-archive"
 
 
@@ -2319,6 +2346,10 @@ _TRANSFORMS: dict[str, Any] = {
     "diff_leaf_nodes":                 _diff_leaf_nodes,
     "diff_leaf_nodes_cross_enrollment": _diff_leaf_nodes_cross_enrollment,
     "extract_all_names":               _extract_all_names,
+    # Composite search name fallback — identify resources it missed, then fold
+    # in names fetched one-by-one via /api/content/v1/read/{id}.
+    "diff_missing_resource_ids":       _diff_missing_resource_ids,
+    "append_resource_name":            _append_resource_name,
     "extract_scorm_resource_name":     _extract_scorm_resource_name,
     "extract_scorm_duration_minutes":  _extract_scorm_duration_minutes,
     "detect_assessment_only":          _detect_assessment_only,

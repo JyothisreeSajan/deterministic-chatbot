@@ -657,9 +657,9 @@ nodes:
       text: "**Individual users cannot update the EHRMS ID directly.** Only your MDO / Nodal Officer can update this field."
     steps:
       - "Contact your **MDO / Nodal Officer** and share:"
-      - "- Your registered **Email ID**"
-      - "- Your registered **Mobile Number**"
-      - "- Your correct **EHRMS ID**"
+      - " Your registered **Email ID**"
+      - " Your registered **Mobile Number**"
+      - " Your correct **EHRMS ID**"
       - "The MDO will update the External System ID in your profile."
     follow_up:
       text: "Would you like me to look up your MDO's contact details?"

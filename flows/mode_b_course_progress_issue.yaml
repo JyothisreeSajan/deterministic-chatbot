@@ -745,6 +745,12 @@ nodes:
       # Surface incomplete resource names for display in resolution messages
       - { from: "$.content[*].name", to: collected.incomplete_resource_names,
           transform: extract_all_names }
+      # Fallback support — identify which incomplete_ids the composite search
+      # did NOT return (e.g. Draft/Retired edge cases, or partial results).
+      # branch_on_missing_resource_names routes these to a one-by-one
+      # content/v1/read lookup so their names still reach the user.
+      - { from: "$.content[*].identifier", to: collected.missing_resource_ids,
+          transform: diff_missing_resource_ids, transform_ctx_key: collected.incomplete_ids }
       # SCORM-specific: first SCORM resource name + duration (minutes)
       - { from: "$.content[*]", to: collected.scorm_resource_name,
           transform: extract_scorm_resource_name }
@@ -753,10 +759,55 @@ nodes:
       - { from: "$.content[0].identifier", to: collected.assessment_id }
       - { from: "$.content[0].maxAttempts", to: collected.max_attempts }
       - { from: "$.content[0].maxAssessmentRetakeAttempts", to: collected.max_retake_attempts }
-    on_success: branch_on_resource_type
+    on_success: branch_on_missing_resource_names
+    # Composite search failed outright (HTTP-level error) — missing_resource_ids
+    # was never set by response_mapping, so api_fetch_resource_name_fallback's
+    # inline fallback (see below) falls through to the FULL incomplete_ids list.
     on_error:
-      any: resolution_generic_error
+      any: api_fetch_resource_name_fallback
     timeout_ms: 8000
+
+  # ===========================================================================
+  # STEP 8.1a — Composite Search Name Fallback
+  #
+  # Composite search queries all incomplete_ids in one request, but can miss
+  # some (e.g. Draft/Retired edge cases) or fail entirely. For any resource
+  # whose name wasn't returned, fetch it individually via content/v1/read
+  # (one call per ID — no batch endpoint for this) and fold the name into
+  # collected.incomplete_resource_names so the user still sees the full list.
+  # ===========================================================================
+  - id: branch_on_missing_resource_names
+    type: branch
+    rules:
+      - { if: "len(ctx.collected.missing_resource_ids or []) > 0",
+          then: api_fetch_resource_name_fallback }
+    default: branch_on_resource_type
+
+  - id: api_fetch_resource_name_fallback
+    type: api_call
+    integration: karmayogi
+    request:
+      method: GET
+      # missing_resource_ids is set only when composite search succeeded but
+      # missed some IDs; if composite search failed outright it's unset/None,
+      # so the fallback covers every incomplete_id instead.
+      url: "/api/content/v1/read/{{ (ctx.collected.missing_resource_ids if ctx.collected.missing_resource_ids else ctx.collected.incomplete_ids)[ctx.counters.missing_name_idx] }}"
+    response_mapping:
+      - { from: "$.content.name", to: collected.incomplete_resource_names,
+          transform: append_resource_name, transform_ctx_key: collected.incomplete_resource_names }
+    on_success: loop_missing_resource_names
+    on_error:
+      # Skip on error and still advance the loop so remaining IDs are checked.
+      any: loop_missing_resource_names
+    timeout_ms: 8000
+
+  - id: loop_missing_resource_names
+    type: increment_and_branch
+    counter: missing_name_idx
+    rules:
+      - { if: "ctx.counters.missing_name_idx < len(ctx.collected.missing_resource_ids if ctx.collected.missing_resource_ids else ctx.collected.incomplete_ids)",
+          then: api_fetch_resource_name_fallback }
+    default: branch_on_resource_type
 
 
   # ===========================================================================

@@ -21,7 +21,7 @@
 #   POST /api/course/private/v4/user/enrollment/list/{user_id}
 #   GET  /api/private/content/v3/hierarchy/{program_id}
 #   GET  /api/content/v1/read/{course_id}
-#   POST /api/content/v1/search
+#   POST /api/composite/v4/search
 #   POST /api/admin/content/state/read          (Admin Content State API)
 #   GET  /api/admin/assesment/retake/count      (Assessment Limit API)
 # =============================================================================
@@ -257,7 +257,7 @@ nodes:
   - id: branch_on_content_type
     type: branch
     rules:
-      - { if: "ctx.collected.primary_category == 'Program'",
+      - { if: "ctx.collected.primary_category in ['Program', 'Curated Program']",
           then: api_fetch_program_hierarchy }
     default: api_admin_content_state
 
@@ -682,7 +682,7 @@ nodes:
   # STEP 8 — Identify Resource Type (SOP 8.1)
   #
   # 8.1 Content Search by incomplete resource IDs.
-  #     POST /api/content/v1/search
+  #     POST /api/composite/v4/search
   #     filters.identifier = incomplete_ids[] — the API returns ONLY the pending
   #     resources (identified in Step 7 via the leaf-node diff). No client-side
   #     filtering is required; non-filtered transforms are used directly.
@@ -700,7 +700,7 @@ nodes:
     integration: karmayogi
     request:
       method: POST
-      url: "/api/content/v1/search"
+      url: "/api/composite/v4/search"
       body:
         request:
           filters:
@@ -745,18 +745,82 @@ nodes:
       # Surface incomplete resource names for display in resolution messages
       - { from: "$.content[*].name", to: collected.incomplete_resource_names,
           transform: extract_all_names }
+      # Fallback support — identify which incomplete_ids the composite search
+      # did NOT return (e.g. Draft/Retired edge cases, or partial results).
+      # branch_on_missing_resource_names routes these to a one-by-one
+      # content/v1/read lookup so their names still reach the user.
+      - { from: "$.content[*].identifier", to: collected.missing_resource_ids,
+          transform: diff_missing_resource_ids, transform_ctx_key: collected.incomplete_ids }
       # SCORM-specific: first SCORM resource name + duration (minutes)
       - { from: "$.content[*]", to: collected.scorm_resource_name,
           transform: extract_scorm_resource_name }
       - { from: "$.content[*]", to: collected.scorm_resource_duration_min,
           transform: extract_scorm_duration_minutes }
+      # Split the pending-resource batch into SCORM vs non-SCORM name lists so
+      # resolution_scorm_guidance can show each with its own instructions.
+      - { from: "$.content[*]", to: collected.scorm_resource_names,
+          transform: extract_scorm_resource_names }
+      - { from: "$.content[*]", to: collected.non_scorm_resource_names,
+          transform: extract_non_scorm_resource_names }
       - { from: "$.content[0].identifier", to: collected.assessment_id }
       - { from: "$.content[0].maxAttempts", to: collected.max_attempts }
       - { from: "$.content[0].maxAssessmentRetakeAttempts", to: collected.max_retake_attempts }
-    on_success: branch_on_resource_type
+    on_success: branch_on_missing_resource_names
+    # Composite search failed outright (HTTP-level error) — missing_resource_ids
+    # was never set by response_mapping, so api_fetch_resource_name_fallback's
+    # inline fallback (see below) falls through to the FULL incomplete_ids list.
     on_error:
-      any: resolution_generic_error
+      any: api_fetch_resource_name_fallback
     timeout_ms: 8000
+
+  # ===========================================================================
+  # STEP 8.1a — Composite Search Name Fallback
+  #
+  # Composite search queries all incomplete_ids in one request, but can miss
+  # some (e.g. Draft/Retired edge cases) or fail entirely. For any resource
+  # whose name wasn't returned, fetch it individually via content/v1/read
+  # (one call per ID — no batch endpoint for this) and fold the name into
+  # collected.incomplete_resource_names so the user still sees the full list.
+  # ===========================================================================
+  - id: branch_on_missing_resource_names
+    type: branch
+    rules:
+      - { if: "len(ctx.collected.missing_resource_ids or []) > 0",
+          then: api_fetch_resource_name_fallback }
+    default: branch_on_resource_type
+
+  - id: api_fetch_resource_name_fallback
+    type: api_call
+    integration: karmayogi
+    request:
+      method: GET
+      # missing_resource_ids is set only when composite search succeeded but
+      # missed some IDs; if composite search failed outright it's unset/None,
+      # so the fallback covers every incomplete_id instead.
+      url: "/api/content/v1/read/{{ (ctx.collected.missing_resource_ids if ctx.collected.missing_resource_ids else ctx.collected.incomplete_ids)[ctx.counters.missing_name_idx] }}"
+    response_mapping:
+      - { from: "$.content.name", to: collected.incomplete_resource_names,
+          transform: append_resource_name, transform_ctx_key: collected.incomplete_resource_names }
+      # Composite search missed this resource's metadata entirely, so also fold
+      # its name into the correct SCORM/non-SCORM sub-list (mimeType-gated)
+      # used by resolution_scorm_guidance.
+      - { from: "$.content", to: collected.scorm_resource_names,
+          transform: append_resource_name_if_scorm, transform_ctx_key: collected.scorm_resource_names }
+      - { from: "$.content", to: collected.non_scorm_resource_names,
+          transform: append_resource_name_if_non_scorm, transform_ctx_key: collected.non_scorm_resource_names }
+    on_success: loop_missing_resource_names
+    on_error:
+      # Skip on error and still advance the loop so remaining IDs are checked.
+      any: loop_missing_resource_names
+    timeout_ms: 8000
+
+  - id: loop_missing_resource_names
+    type: increment_and_branch
+    counter: missing_name_idx
+    rules:
+      - { if: "ctx.counters.missing_name_idx < len(ctx.collected.missing_resource_ids if ctx.collected.missing_resource_ids else ctx.collected.incomplete_ids)",
+          then: api_fetch_resource_name_fallback }
+    default: branch_on_resource_type
 
 
   # ===========================================================================
@@ -786,11 +850,19 @@ nodes:
     type: resolution
     prompt:
       text: |
-        We found that the resource **“{{ ctx.collected.scorm_resource_name }}”** is still **In Progress / Not Started**.
+        We found that the following resource(s) are still **In Progress / Not Started**:
+        {% if ctx.collected.non_scorm_resource_names %}
 
-        This resource is in **SCORM format**.
+        List of Non-SCORM resources to be completed:
 
-        Please follow the instructions below carefully:
+        {{ ctx.collected.non_scorm_resource_names }}
+        {% endif %}
+
+        The List of  resource(s) are in **SCORM format**:
+
+        {{ ctx.collected.scorm_resource_names }}
+
+        Please follow the instructions below carefully to complete the SCORM resource(s):
 
         - Complete the resource in **one continuous session**.
         - **Do not increase the playback speed** while viewing the content.
@@ -808,6 +880,9 @@ nodes:
       - "Expand each module using the **“+” icon**."
       - "Check for content items that **do not have a blue tick mark**."
       - "Complete all pending resources until every item displays a **blue tick**."
+    action_button:
+      label: "🔗 View Course"
+      url: "{{ env.KARMAYOGI_PORTAL_BASE_URL }}/app/toc/{{ ctx.collected.course_id }}/overview"
     next: satisfied
 
   # ===========================================================================
@@ -856,6 +931,9 @@ nodes:
       - "Open **{{ ctx.collected.course_name }}** → click **Resume**"
       - "Expand each module using the **+ icon** and locate the pending assessment"
       - "Complete the assessment — all modules must show a **blue tick** for 100% completion"
+    action_button:
+      label: "🔗 View Course"
+      url: "{{ env.KARMAYOGI_PORTAL_BASE_URL }}/app/toc/{{ ctx.collected.course_id }}/overview"
     follow_up:
       text: "Were you able to complete the assessment?"
       quick_replies:

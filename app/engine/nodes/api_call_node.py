@@ -566,6 +566,57 @@ def _extract_all_names(names: Any) -> str:
     return "\n".join(f"- {n}" for n in clean)
 
 
+def _diff_missing_resource_ids(found_ids: Any, incomplete_ids: Any) -> list[str]:
+    """Return incomplete_ids not present in found_ids (composite search misses).
+
+    found_ids is $.content[*].identifier from the composite search response;
+    incomplete_ids is the full pending-resource list from the leaf-node diff.
+    Used to identify which resources need a one-by-one content/v1/read fallback
+    because the composite search didn't return their name.
+    """
+    found = {f for f in (found_ids if isinstance(found_ids, list) else []) if f}
+    incomplete = incomplete_ids if isinstance(incomplete_ids, list) else []
+    return [rid for rid in incomplete if rid not in found]
+
+
+def _append_resource_name(new_name: Any, existing_names: Any) -> str:
+    """Append one resource name (as a bullet line) onto the existing names string.
+
+    Used by the composite-search-fallback content/v1/read loop to add names
+    for resources the composite search missed, on top of whatever
+    extract_all_names already produced from the composite search response.
+    """
+    existing = existing_names if isinstance(existing_names, str) else ""
+    if not new_name:
+        return existing
+    line = f"- {new_name}"
+    return f"{existing}\n{line}" if existing else line
+
+
+def _append_resource_name_to_list(new_name: Any, existing_names: Any) -> list[str]:
+    """Append one resource name onto a plain (non-bullet-formatted) names list.
+
+    Same fallback role as append_resource_name, for flows that store
+    $.content[*].name as a raw list rather than a bullet-joined string
+    (e.g. mode_b_certificate_download.yaml's c1_incomplete_resource_names).
+    """
+    existing = existing_names if isinstance(existing_names, list) else []
+    if not new_name:
+        return existing
+    return existing + [new_name]
+
+
+def _set_first_resource_name(new_name: Any, existing_first: Any) -> Any:
+    """Fill a single "first incomplete resource name" field, once.
+
+    Composite search normally sets this from $.content[0].name; if it missed
+    every incomplete ID (content came back empty), this fills it from the
+    first content/v1/read fallback result instead. Never overwrites an
+    already-set value, matching $.content[0]'s "first match wins" semantics.
+    """
+    return existing_first if existing_first else new_name
+
+
 _SCORM_MIME = "application/vnd.ekstep.html-archive"
 
 
@@ -581,6 +632,65 @@ def _extract_scorm_resource_name(content_list: Any) -> str:
         if isinstance(item, dict) and item.get("mimeType") == _SCORM_MIME:
             return item.get("name") or ""
     return ""
+
+
+def _append_resource_name_if_scorm(content_obj: Any, existing_names: Any) -> str:
+    """Append content_obj's name onto the SCORM bullet list, only if it is SCORM.
+
+    Counterpart to append_resource_name for the composite-search-fallback
+    content/v1/read loop, so resources composite search missed entirely still
+    land in the correct SCORM/non-SCORM sub-list rather than only the combined
+    incomplete_resource_names list.
+    """
+    existing = existing_names if isinstance(existing_names, str) else ""
+    if not isinstance(content_obj, dict) or content_obj.get("mimeType") != _SCORM_MIME:
+        return existing
+    return _append_resource_name(content_obj.get("name"), existing)
+
+
+def _append_resource_name_if_non_scorm(content_obj: Any, existing_names: Any) -> str:
+    """Append content_obj's name onto the non-SCORM bullet list, only if it isn't SCORM.
+
+    Counterpart to _append_resource_name_if_scorm — see that docstring.
+    """
+    existing = existing_names if isinstance(existing_names, str) else ""
+    if not isinstance(content_obj, dict) or content_obj.get("mimeType") == _SCORM_MIME:
+        return existing
+    return _append_resource_name(content_obj.get("name"), existing)
+
+
+def _extract_scorm_resource_names(content_list: Any) -> str:
+    """Return a bullet list of names of all SCORM resources in the content list.
+
+    content_list is the full $.content[*] array (list of dicts). Used to
+    split a mixed pending-resource batch into a SCORM-only sub-list so the
+    SCORM completion instructions aren't misapplied to non-SCORM resources.
+    Returns "" if there are no SCORM resources.
+    """
+    if not isinstance(content_list, list):
+        return ""
+    names = [
+        item.get("name")
+        for item in content_list
+        if isinstance(item, dict) and item.get("mimeType") == _SCORM_MIME and item.get("name")
+    ]
+    return _extract_all_names(names)
+
+
+def _extract_non_scorm_resource_names(content_list: Any) -> str:
+    """Return a bullet list of names of all non-SCORM resources in the content list.
+
+    Counterpart to _extract_scorm_resource_names — same content_list input,
+    complementary mimeType filter. Returns "" if there are no non-SCORM resources.
+    """
+    if not isinstance(content_list, list):
+        return ""
+    names = [
+        item.get("name")
+        for item in content_list
+        if isinstance(item, dict) and item.get("mimeType") != _SCORM_MIME and item.get("name")
+    ]
+    return _extract_all_names(names)
 
 
 def _extract_scorm_duration_minutes(content_list: Any) -> float:
@@ -2319,7 +2429,17 @@ _TRANSFORMS: dict[str, Any] = {
     "diff_leaf_nodes":                 _diff_leaf_nodes,
     "diff_leaf_nodes_cross_enrollment": _diff_leaf_nodes_cross_enrollment,
     "extract_all_names":               _extract_all_names,
+    # Composite search name fallback — identify resources it missed, then fold
+    # in names fetched one-by-one via /api/content/v1/read/{id}.
+    "diff_missing_resource_ids":       _diff_missing_resource_ids,
+    "append_resource_name":            _append_resource_name,
+    "append_resource_name_to_list":    _append_resource_name_to_list,
+    "append_resource_name_if_scorm":     _append_resource_name_if_scorm,
+    "append_resource_name_if_non_scorm": _append_resource_name_if_non_scorm,
+    "set_first_resource_name":         _set_first_resource_name,
     "extract_scorm_resource_name":     _extract_scorm_resource_name,
+    "extract_scorm_resource_names":    _extract_scorm_resource_names,
+    "extract_non_scorm_resource_names": _extract_non_scorm_resource_names,
     "extract_scorm_duration_minutes":  _extract_scorm_duration_minutes,
     "detect_assessment_only":          _detect_assessment_only,
     "calculate_remaining_attempts":    _calculate_remaining_attempts,

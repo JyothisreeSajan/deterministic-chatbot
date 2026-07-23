@@ -43,7 +43,7 @@ STEP 5   → POST /api/admin/content/state/read               (per incomplete ch
 STEP 6a  → GET  /api/content/v2/read/{courseId}             (or hierarchy for Program)
                 ↓ Fetch leaf nodes; diff against completed IDs
 
-STEP 6b  → POST /api/content/v1/search
+STEP 6b  → POST /api/composite/v4/search
                 ↓ Fetch resource metadata (mimeType, maxAttempts, SCORM detection)
 
 STEP 6c  → GET  /api/admin/assesment/retake/count           (assessment-only resources)
@@ -341,11 +341,11 @@ curl -X GET \
 
 > Resolves names, mimeTypes, and attempt limits for all incomplete leaf node identifiers.
 
-**Endpoint:** `POST /api/content/v1/search`
+**Endpoint:** `POST /api/composite/v4/search`
 
 ```bash
 curl -X POST \
-  "https://portal.uat.karmayogibharat.net/api/content/v1/search" \
+  "https://portal.uat.karmayogibharat.net/api/composite/v4/search" \
   -H "Content-Type: application/json" \
   -d '{
     "request": {
@@ -485,7 +485,7 @@ curl -X POST \
 | 5 | `/api/admin/content/state/read` | POST | Yes | — | Detect tech issue in incomplete child course | `consumptionRecords` |
 | 6a-i | `/api/content/v2/read/{courseId}` | GET | Yes | —  | Fetch leaf nodes (non-Program) | `leafNodes`, `primaryCategory` |
 | 6a-ii | `/api/private/content/v3/hierarchy/{courseId}` | GET | Yes | — | 8000 ms | Fetch leaf nodes (Program type) | `leafNodes`, `children` |
-| 6b | `/api/content/v1/search` | POST | No | —  | Resolve resource names, mimeTypes, attempt limits | `name`, `mimeType`, `maxAttempts`, `identifier` |
+| 6b | `/api/composite/v4/search` | POST | No | —  | Resolve resource names, mimeTypes, attempt limits | `name`, `mimeType`, `maxAttempts`, `identifier` |
 | 6b fallback | `/api/course/v1/hierarchy/{courseId}` | GET | Yes | — | 8000 ms | Fallback hierarchy name fetch if search returns empty | `incomplete_resource_names` |
 | 6c | `/api/admin/assesment/retake/count` | GET | Yes | — |  | Check attempts made vs allowed | `attemptsMade`, `attemptsAllowed` |
 | MDO | `/api/private/user/v1/search` | POST | Yes | — | — | MDO Admin lookup | `mdo_admin_name`, `mdo_admin_email` |

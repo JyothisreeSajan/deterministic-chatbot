@@ -593,6 +593,30 @@ def _append_resource_name(new_name: Any, existing_names: Any) -> str:
     return f"{existing}\n{line}" if existing else line
 
 
+def _append_resource_name_to_list(new_name: Any, existing_names: Any) -> list[str]:
+    """Append one resource name onto a plain (non-bullet-formatted) names list.
+
+    Same fallback role as append_resource_name, for flows that store
+    $.content[*].name as a raw list rather than a bullet-joined string
+    (e.g. mode_b_certificate_download.yaml's c1_incomplete_resource_names).
+    """
+    existing = existing_names if isinstance(existing_names, list) else []
+    if not new_name:
+        return existing
+    return existing + [new_name]
+
+
+def _set_first_resource_name(new_name: Any, existing_first: Any) -> Any:
+    """Fill a single "first incomplete resource name" field, once.
+
+    Composite search normally sets this from $.content[0].name; if it missed
+    every incomplete ID (content came back empty), this fills it from the
+    first content/v1/read fallback result instead. Never overwrites an
+    already-set value, matching $.content[0]'s "first match wins" semantics.
+    """
+    return existing_first if existing_first else new_name
+
+
 _SCORM_MIME = "application/vnd.ekstep.html-archive"
 
 
@@ -2350,6 +2374,8 @@ _TRANSFORMS: dict[str, Any] = {
     # in names fetched one-by-one via /api/content/v1/read/{id}.
     "diff_missing_resource_ids":       _diff_missing_resource_ids,
     "append_resource_name":            _append_resource_name,
+    "append_resource_name_to_list":    _append_resource_name_to_list,
+    "set_first_resource_name":         _set_first_resource_name,
     "extract_scorm_resource_name":     _extract_scorm_resource_name,
     "extract_scorm_duration_minutes":  _extract_scorm_duration_minutes,
     "detect_assessment_only":          _detect_assessment_only,

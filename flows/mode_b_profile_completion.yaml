@@ -94,7 +94,7 @@ nodes:
       email_mobile:  email_mobile_steps
       mother_tongue: mother_tongue_fetch_languages
       ehrms:         ehrms_info
-      retirement:    checking_profile_for_retirement
+      retirement:    fetch_user_profile_retirement
       service:       service_fetch_cadre_config
       svc_history:   svc_history_ask
       edu_qual:      edu_qual_steps
@@ -412,7 +412,7 @@ nodes:
       - { id: no_otp,           label: "❌ Not receiving OTP" }
       - { id: multiple_account, label: "👥 Multiple account issue / Invalid domain" }
     on_reply:
-      no_otp:           fetch_mdo_for_email
+      no_otp:           fetch_root_org_for_email
       multiple_account: email_mobile_multiple_account
 
   - id: email_mobile_multiple_account
@@ -438,12 +438,6 @@ nodes:
       - "Contact your MDO admin and share your email domain for approval."
       - "Once the domain is whitelisted, retry the Email ID update."
     next: satisfied
-
-  - id: fetch_mdo_for_email
-    type: message
-    prompt:
-      text: "Finding your MDO's contact details..."
-    next: fetch_root_org_for_email
 
   - id: fetch_root_org_for_email
     type: api_call
@@ -667,14 +661,8 @@ nodes:
         - { id: yes, label: "✅ Yes, get MDO details" }
         - { id: no,  label: "✅ No, I already have their contact" }
     on_reply:
-      yes: fetch_mdo_for_ehrms
+      yes: fetch_root_org_for_ehrms
       no:  satisfied
-
-  - id: fetch_mdo_for_ehrms
-    type: message
-    prompt:
-      text: "Finding your MDO's contact details..."
-    next: fetch_root_org_for_ehrms
 
   - id: fetch_root_org_for_ehrms
     type: api_call
@@ -751,12 +739,6 @@ nodes:
   # ═══════════════════════════════════════════════════════════════════════════
   # §7  DATE OF RETIREMENT
   # ═══════════════════════════════════════════════════════════════════════════
-  - id: checking_profile_for_retirement
-    type: message
-    prompt:
-      text: "Checking your profile to see if your EHRMS ID is set..."
-    next: fetch_user_profile_retirement
-
   - id: fetch_user_profile_retirement
     type: api_call
     integration: karmayogi
@@ -797,12 +779,6 @@ nodes:
       - "Your MDO / Nodal Officer needs to update the **EHRMS ID** in your profile first."
       - "Once the EHRMS ID is set, the Date of Retirement will be pulled automatically from the EHRMS portal."
       - "Ensure the Date of Retirement is also correct in the **EHRMS portal** itself."
-    next: fetch_mdo_for_retirement
-
-  - id: fetch_mdo_for_retirement
-    type: message
-    prompt:
-      text: "Finding your MDO's contact details..."
     next: fetch_root_org_for_retirement
 
   - id: fetch_root_org_for_retirement
@@ -996,12 +972,7 @@ nodes:
       - "Navigate to **Other Details** → click **Edit**."
       - "Find the **Service** field and select **{{ ctx.collected.service_selected_name }}**."
       - "Click **Save / Update Details**."
-    follow_up:
-      text: "Were you able to update your service?"
-      quick_replies:
-        - { id: yes, label: "✅ Yes, updated" }
-    on_reply:
-      yes: satisfied
+    next: satisfied
 
   - id: confirm_service_ticket
     type: ticket_confirm
@@ -1048,14 +1019,8 @@ nodes:
       - { id: edit, label: "❌ Can't edit / wrong organisation shown" }
       - { id: add,  label: "➕ Add previous employment history" }
     on_reply:
-      edit: svc_history_edit_branch
+      edit: fetch_user_for_svc_history
       add:  svc_history_add_steps
-
-  - id: svc_history_edit_branch
-    type: message
-    prompt:
-      text: "Checking your profile details..."
-    next: fetch_user_for_svc_history
 
   - id: fetch_user_for_svc_history
     type: api_call

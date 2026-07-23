@@ -18,7 +18,7 @@ STEP 1   → POST /api/course/private/v4/user/enrollment/list/{user_id} (via pic
            
            enrollment_status = 1 (in-progress) → proceed to STEP 2
                 ↓
-STEP 2   → POST /api/content/v1/search           (only when course is in-progress)
+STEP 2   → POST /api/composite/v4/search           (only when course is in-progress)
                 ↓ Fetch name, mimeType for each incomplete resource ID
                 ↓ Determine: has_scorm_resources = any(mimeType == "application/vnd.ekstep.html-archive")
                 ↓ Provide SCORM or Standard progress guidance
@@ -84,11 +84,11 @@ If `completedOn` is present, it is checked to see if 24 hours have elapsed. If `
 
 > Only reached when `enrollment_status_raw = 1`. Identifies which resources are pending and determines whether they are SCORM-based.
 
-**Endpoint:** `POST /api/content/v1/search`
+**Endpoint:** `POST /api/composite/v4/search`
 
 ```bash
 curl -X POST \
-  "https://portal.uat.karmayogibharat.net/api/content/v1/search" \
+  "https://portal.uat.karmayogibharat.net/api/composite/v4/search" \
   -H "Content-Type: application/json" \
   -d '{
     "request": {
@@ -139,4 +139,4 @@ for lang_key, status_map in langContentStatus.items():
 | Step | Endpoint | Method | Purpose | Key Fields |
 |---|---|---|---|---|
 | 1 | `/api/course/private/v4/user/enrollment/list/{user_id}` | POST | Course status, completedOn, hours_since_completion via picker | `status`, `completedOn`, `langContentStatus` |
-| 2 (in-progress only) | `/api/content/v1/search` | POST | Fetch incomplete resource details; detect SCORM vs non-SCORM | `mimeType`, `name` |
+| 2 (in-progress only) | `/api/composite/v4/search` | POST | Fetch incomplete resource details; detect SCORM vs non-SCORM | `mimeType`, `name` |

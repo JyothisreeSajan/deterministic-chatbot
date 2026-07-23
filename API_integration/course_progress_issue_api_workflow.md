@@ -42,7 +42,7 @@ STEP 5 → GET   /api/content/v1/read/{course_id}
          IF API error                        → fall back to enrollment-based incomplete_ids ↓
          ELSE                                → STEP 6
 
-STEP 6 → POST  /api/content/v1/search
+STEP 6 → POST  /api/composite/v4/search
               ↓ Fetch name, mimeType, primaryCategory, duration for each incomplete resource
               ↓ Detect: all_resources_assessment, has_scorm_resources
               ↓
@@ -364,15 +364,15 @@ incomplete_ids = leafNodes − completed_ids
 
 ---
 
-## Step 6 — Content Search (Resource Metadata)
+## Step 6 — Composite Search (Resource Metadata)
 
 > Retrieves name, MIME type, primary category, and duration for each incomplete resource to determine the correct guidance branch.
 
-**Endpoint:** `POST /api/content/v1/search`
+**Endpoint:** `POST /api/composite/v4/search`
 
 ```bash
 curl -X POST \
-  "https://portal.uat.karmayogibharat.net/api/content/v1/search" \
+  "https://portal.uat.karmayogibharat.net/api/composite/v4/search" \
   -H "Content-Type: application/json" \
   -d '{
     "request": {
@@ -389,7 +389,7 @@ curl -X POST \
   }'
 ```
 
-> Replace `identifier` array with `incomplete_ids[]` from Step 5.
+> Replace `identifier` array with `incomplete_ids[]` from Step 5. Request body is unchanged from the previous `/api/content/v1/search` integration — only the endpoint path moved.
 
 ### Request Filters
 
@@ -444,6 +444,8 @@ curl -X POST \
   }
 }
 ```
+
+> `/api/composite/v4/search` returns the same `result.content[*]` shape as the previous `/api/content/v1/search` endpoint (verified against a live UAT response), so no response-mapping changes were needed.
 
 ### MIME Type → Guidance Branch
 
@@ -551,10 +553,10 @@ return remaining if remaining > 0 else 0
 | 3 | `GET /api/private/content/v3/hierarchy/{program_id}?mode=edit` | Program child course IDs | `children[*].identifier` → `child_course_ids` | Step 4 loop `courseId` field |
 | 4 | `POST /api/admin/content/state/read` | Technical issue detection (loop — once per child course for Programs) | `consumptionRecords[*]` → `admin_content_states` (accumulated via `append_consumption_records`) | `compare_enrollment_vs_admin_state` |
 | 5 | `GET /api/content/v1/read/{course_id}` | Leaf-node cross-check | `$.content.leafNodes` diff → `incomplete_ids` | Step 6 `filters.identifier` |
-| 6 | `POST /api/content/v1/search` | Resource metadata for guidance routing | `content[*].mimeType` → `has_scorm_resources` | Branch: SCORM vs standard guidance |
-| 6 | `POST /api/content/v1/search` | Resource metadata for guidance routing | `content[*].name` → `incomplete_resource_names` | Resource list in non-SCORM message |
-| 6 | `POST /api/content/v1/search` | Resource metadata for guidance routing | `content[*]` → `scorm_resource_name`, `scorm_resource_duration_min` | SCORM guidance message |
-| 6 | `POST /api/content/v1/search` | Resource metadata for guidance routing | `content[*]` → `all_resources_assessment` | Branch: assessment-only guidance |
+| 6 | `POST /api/composite/v4/search` | Resource metadata for guidance routing | `content[*].mimeType` → `has_scorm_resources` | Branch: SCORM vs standard guidance |
+| 6 | `POST /api/composite/v4/search` | Resource metadata for guidance routing | `content[*].name` → `incomplete_resource_names` | Resource list in non-SCORM message |
+| 6 | `POST /api/composite/v4/search` | Resource metadata for guidance routing | `content[*]` → `scorm_resource_name`, `scorm_resource_duration_min` | SCORM guidance message |
+| 6 | `POST /api/composite/v4/search` | Resource metadata for guidance routing | `content[*]` → `all_resources_assessment` | Branch: assessment-only guidance |
 | 7 | `GET /api/admin/assesment/retake/count` | Assessment attempt limit check | `attemptsAllowed`, `attemptsMade` → `remaining_attempts` | Branch: retry vs raise ticket |
 | R1 | `POST .../enrollment/list/{user_id}` | Revalidation — refresh certificate/completion | `issuedCertificates` → `certificate_issued`; `langContentStatus` → `lang_content_status` | Branch: certificate issued or re-run Step 4 |
 | R2 | `POST /api/admin/content/state/read` | Revalidation — re-check technical issue | `consumptionRecords[*]` → `admin_content_states` | `compare_enrollment_vs_admin_state` |

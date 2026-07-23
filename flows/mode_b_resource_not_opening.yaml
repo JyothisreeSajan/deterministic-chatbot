@@ -13,7 +13,7 @@
 # APIs used:
 #   POST /api/course/private/v4/user/enrollment/list/{user_id}
 #   GET  /api/content/v2/read/{course_id}
-#   POST /api/content/v1/search
+#   POST /api/composite/v4/search
 #   GET  /api/content/v1/read/{resource_id}
 # =============================================================================
 
@@ -194,7 +194,7 @@ nodes:
     on_error:
       any: api_error_fallback
 
-  # Guard: /api/content/v1/search silently ignores an EMPTY identifier filter
+  # Guard: /api/composite/v4/search silently ignores an EMPTY identifier filter
   # and returns unrelated content from across the whole platform instead of
   # erroring or returning nothing. Never let that happen — if the content
   # read above found no leaf/child IDs at all, go straight to the "no
@@ -222,7 +222,7 @@ nodes:
       integration: karmayogi
       request:
         method: POST
-        url: "/api/content/v1/search"
+        url: "/api/composite/v4/search"
         body:
           request:
             filters:
@@ -234,6 +234,18 @@ nodes:
         list_path:       "$.content"
         id_field:        identifier
         label_field:     name
+        extra_fields:
+          - { from: name,     to: collected.resource_name }
+          - { from: mimeType, to: collected.resource_mime_type }
+      # Composite search can miss some known resource IDs (e.g. Draft/Retired
+      # status) and just silently drop them from $.content — which here means
+      # they'd never appear as a selectable option at all. For any ID present
+      # in all_resource_ids/all_child_ids but absent from the composite search
+      # result, fetch it individually via content/v1/read and add it in.
+      fallback_missing_ids:
+        ids_ctx_keys: ["collected.all_resource_ids", "collected.all_child_ids"]
+        read_path:   "/api/content/v1/read/{id}"
+        label_field: name
         extra_fields:
           - { from: name,     to: collected.resource_name }
           - { from: mimeType, to: collected.resource_mime_type }

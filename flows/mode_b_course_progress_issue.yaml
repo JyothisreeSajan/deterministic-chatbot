@@ -880,6 +880,9 @@ nodes:
       - "Expand each module using the **“+” icon**."
       - "Check for content items that **do not have a blue tick mark**."
       - "Complete all pending resources until every item displays a **blue tick**."
+    action_button:
+      label: "🔗 View Course"
+      url: "{{ env.KARMAYOGI_PORTAL_BASE_URL }}/app/toc/{{ ctx.collected.course_id }}/overview"
     next: satisfied
 
   # ===========================================================================
@@ -928,6 +931,9 @@ nodes:
       - "Open **{{ ctx.collected.course_name }}** → click **Resume**"
       - "Expand each module using the **+ icon** and locate the pending assessment"
       - "Complete the assessment — all modules must show a **blue tick** for 100% completion"
+    action_button:
+      label: "🔗 View Course"
+      url: "{{ env.KARMAYOGI_PORTAL_BASE_URL }}/app/toc/{{ ctx.collected.course_id }}/overview"
     follow_up:
       text: "Were you able to complete the assessment?"
       quick_replies:

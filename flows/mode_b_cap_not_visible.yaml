@@ -1287,6 +1287,9 @@ nodes:
       - "Check for content items **without a blue tick mark**"
       - "All modules must show a **blue tick** to complete the course 100%"
       - "Resume and complete the pending videos or content from the **top-right corner** until all items are marked complete"
+    action_button:
+      label: "🔗 View Course"
+      url: "{{ env.KARMAYOGI_PORTAL_BASE_URL }}/app/toc/{{ ctx.collected.course_id }}/overview"
     follow_up:
       text: "Has your issue been resolved?"
       quick_replies:
@@ -1316,6 +1319,9 @@ nodes:
       - "Check for content items **without a blue tick mark**"
       - "All modules must show a **blue tick** to complete the course 100%"
       - "Resume and complete the pending videos or content from the **top-right corner** until all items are marked complete"
+    action_button:
+      label: "🔗 View Course"
+      url: "{{ env.KARMAYOGI_PORTAL_BASE_URL }}/app/toc/{{ ctx.collected.course_id }}/overview"
     follow_up:
       text: "Has your issue been resolved?"
       quick_replies:

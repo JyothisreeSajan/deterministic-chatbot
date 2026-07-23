@@ -484,6 +484,40 @@ def _extract_completed_ids(lang_content_status: Any) -> list[str]:
     return list(ids)
 
 
+def _completed_ids_from_content_status(content_status: Any) -> list[str] | None:
+    """Resource IDs where status == 2, from the flat contentStatus map.
+
+    contentStatus shape: {"resource_id": 0|1|2, ...} — populated by Program /
+    Curated Program (CAP) enrollments in place of langContentStatus, which
+    those enrollments always leave empty. Course / Standalone Assessment
+    enrollments leave contentStatus empty (`{}`) or absent and use
+    langContentStatus instead.
+
+    Returns None (not []) when contentStatus is absent/empty. This is meant
+    to be used as a SECOND extra_fields mapping, listed after the existing
+    langContentStatus -> completed_ids mapping and targeting the same
+    collected key: the collect_node extra_fields loop only overwrites a key
+    when a later mapping resolves to non-None, so for Course enrollments
+    (contentStatus empty) this entry is a no-op and the langContentStatus
+    result stands; for CAP enrollments (langContentStatus empty, so that
+    mapping already stored []) this entry's real list overwrites the
+    placeholder with the correct one.
+    """
+    if not isinstance(content_status, dict) or not content_status:
+        return None
+    return [resource_id for resource_id, status in content_status.items() if status == 2]
+
+
+def _incomplete_ids_from_content_status(content_status: Any) -> list[str] | None:
+    """Mirror of completed_ids_from_content_status for the not-yet-completed
+    side (status != 2). See that function's docstring for the None-vs-[]
+    distinction and how it composes as a second extra_fields mapping.
+    """
+    if not isinstance(content_status, dict) or not content_status:
+        return None
+    return [resource_id for resource_id, status in content_status.items() if status != 2]
+
+
 def _extract_batch_id(batches: Any) -> str | None:
     """Extract batchId from the first element of a Karmayogi batches[] array.
 
@@ -2423,6 +2457,8 @@ _TRANSFORMS: dict[str, Any] = {
     "extract_incomplete_child_courses": _extract_incomplete_child_courses,
     "extract_incomplete_ids":      _extract_incomplete_ids,
     "extract_completed_ids":           _extract_completed_ids,
+    "completed_ids_from_content_status":   _completed_ids_from_content_status,
+    "incomplete_ids_from_content_status":  _incomplete_ids_from_content_status,
     # Extracts batchId from batches[0] for in-progress courses where batchId
     # is nested inside the batches[] array instead of at the course root level.
     "extract_batch_id":            _extract_batch_id,

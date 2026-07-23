@@ -234,7 +234,7 @@ nodes:
     type: message
     prompt:
       text: |
-        Your designation/group verification request has already been submitted and is awaiting approval from the Organization Admin.
+        Your designation/group verification request has already been submitted and is awaiting approval from the MDO Admin.
 
         Please contact the below admin for further assistance:
 
@@ -255,7 +255,7 @@ nodes:
     type: message
     prompt:
       text: |
-        Your designation/group verification request has already been submitted. However, there is currently no Organization Admin available to approve the request.
+        Your designation/group verification request has already been submitted. However, there is currently no MDO Admin available to approve the request.
 
         Please connect with the concerned YP for further assistance.
 
@@ -268,7 +268,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        We checked, and found that your designation/group verification request has already been submitted, but there is currently no Organization Admin or YP contact available for your organization to assist with approval.
+        We checked, and found that your designation/group verification request has already been submitted, but there is currently no MDO Admin or YP contact available for your organization to assist with approval.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -281,7 +281,7 @@ nodes:
         **Issue Identified:** Designation / Group Verification — No Admin or YP Contact Found
 
         **Summary of Request:**
-        Your designation/group verification request has already been submitted, but there is currently no Organization Admin available to approve it, and we could not locate a YP contact for your organization either. You would like us to investigate this further.
+        Your designation/group verification request has already been submitted, but there is currently no MDO Admin available to approve it, and we could not locate a YP contact for your organization either. You would like us to investigate this further.
 
         • **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 
@@ -323,5 +323,5 @@ nodes:
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update the correct Group and Designation."
       - "Click Send for Approval."
-      - "Once the request is submitted, it will be sent to the Organization Admin for approval. The designation or group will reflect in your profile after approval."
+      - "Once the request is submitted, it will be sent to the MDO Admin for approval. The designation or group will reflect in your profile after approval."
     next: satisfied

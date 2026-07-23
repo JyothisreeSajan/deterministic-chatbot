@@ -21,7 +21,7 @@
 #   POST /api/course/private/v4/user/enrollment/list/{user_id}
 #   GET  /api/private/content/v3/hierarchy/{program_id}
 #   GET  /api/content/v1/read/{course_id}
-#   POST /api/content/v1/search
+#   POST /api/composite/v4/search
 #   POST /api/admin/content/state/read          (Admin Content State API)
 #   GET  /api/admin/assesment/retake/count      (Assessment Limit API)
 # =============================================================================
@@ -257,7 +257,7 @@ nodes:
   - id: branch_on_content_type
     type: branch
     rules:
-      - { if: "ctx.collected.primary_category == 'Program'",
+      - { if: "ctx.collected.primary_category in ['Program', 'Curated Program']",
           then: api_fetch_program_hierarchy }
     default: api_admin_content_state
 
@@ -682,7 +682,7 @@ nodes:
   # STEP 8 — Identify Resource Type (SOP 8.1)
   #
   # 8.1 Content Search by incomplete resource IDs.
-  #     POST /api/content/v1/search
+  #     POST /api/composite/v4/search
   #     filters.identifier = incomplete_ids[] — the API returns ONLY the pending
   #     resources (identified in Step 7 via the leaf-node diff). No client-side
   #     filtering is required; non-filtered transforms are used directly.
@@ -700,7 +700,7 @@ nodes:
     integration: karmayogi
     request:
       method: POST
-      url: "/api/content/v1/search"
+      url: "/api/composite/v4/search"
       body:
         request:
           filters:
@@ -786,7 +786,9 @@ nodes:
     type: resolution
     prompt:
       text: |
-        We found that the resource **“{{ ctx.collected.scorm_resource_name }}”** is still **In Progress / Not Started**.
+        We found that the following resource(s) are still **In Progress / Not Started**:
+
+        {{ ctx.collected.incomplete_resource_names }}
 
         This resource is in **SCORM format**.
 

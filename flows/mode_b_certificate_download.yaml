@@ -15,7 +15,7 @@
 #
 # APIs used:
 #   POST /api/course/private/v4/user/enrollment/list/{user_id}
-#   POST /api/content/v1/search
+#   POST /api/composite/v4/search
 #   GET  /api/user/private/v1/read/{user_id}
 #   PATCH /api/user/private/v1/update
 # =============================================================================
@@ -350,7 +350,7 @@ nodes:
     integration: karmayogi
     request:
       method: POST
-      url: "/api/content/v1/search"
+      url: "/api/composite/v4/search"
       body:
         request:
           filters:

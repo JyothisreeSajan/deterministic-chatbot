@@ -16,7 +16,7 @@ STEP 2   → GET  /api/content/v2/read/{course_id}
                 ↓ Fetch course hierarchy — children[] and leafNodes[]
                 ↓ Collect all resource identifiers from hierarchy
 
-STEP 3   → POST /api/content/v1/search
+STEP 3   → POST /api/composite/v4/search
                 ↓ Fetch name, mimeType for all resource identifiers
                 ↓ Match resource by name (exact → partial)
                 ↓
@@ -110,11 +110,11 @@ These `all_ids` are passed as `filters.identifier` in Step 3.
 
 > Resolves resource identifiers to names and types so the requested resource can be matched and its `mimeType` determined.
 
-**Endpoint:** `POST /api/content/v1/search`
+**Endpoint:** `POST /api/composite/v4/search`
 
 ```bash
 curl -X POST \
-  "https://portal.uat.karmayogibharat.net/api/content/v1/search" \
+  "https://portal.uat.karmayogibharat.net/api/composite/v4/search" \
   -H "Content-Type: application/json" \
   -d '{
     "request": {
@@ -196,5 +196,5 @@ curl -X GET \
 |---|---|---|---|---|---|
 | 1 | `/api/course/private/v4/user/enrollment/list/{user_id}` | POST | Yes | Verify enrollment; get `courseId` | `courseId`, `courseName` |
 | 2 | `/api/content/v2/read/{course_id}` | GET | No | Fetch course hierarchy; collect all resource identifiers | `children[].identifier`, `leafNodes[]` |
-| 3 | `/api/content/v1/search` | POST | No | Resolve resource names and mimeTypes | `identifier`, `name`, `mimeType` |
+| 3 | `/api/composite/v4/search` | POST | No | Resolve resource names and mimeTypes | `identifier`, `name`, `mimeType` |
 | 4 (YouTube only) | `/api/content/v1/read/{resource_id}` | GET | Yes | Fetch playback URLs for YouTube resources | `streamingUrl`, `artifactUrl`, `previewUrl` |

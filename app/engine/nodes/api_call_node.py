@@ -634,6 +634,65 @@ def _extract_scorm_resource_name(content_list: Any) -> str:
     return ""
 
 
+def _append_resource_name_if_scorm(content_obj: Any, existing_names: Any) -> str:
+    """Append content_obj's name onto the SCORM bullet list, only if it is SCORM.
+
+    Counterpart to append_resource_name for the composite-search-fallback
+    content/v1/read loop, so resources composite search missed entirely still
+    land in the correct SCORM/non-SCORM sub-list rather than only the combined
+    incomplete_resource_names list.
+    """
+    existing = existing_names if isinstance(existing_names, str) else ""
+    if not isinstance(content_obj, dict) or content_obj.get("mimeType") != _SCORM_MIME:
+        return existing
+    return _append_resource_name(content_obj.get("name"), existing)
+
+
+def _append_resource_name_if_non_scorm(content_obj: Any, existing_names: Any) -> str:
+    """Append content_obj's name onto the non-SCORM bullet list, only if it isn't SCORM.
+
+    Counterpart to _append_resource_name_if_scorm — see that docstring.
+    """
+    existing = existing_names if isinstance(existing_names, str) else ""
+    if not isinstance(content_obj, dict) or content_obj.get("mimeType") == _SCORM_MIME:
+        return existing
+    return _append_resource_name(content_obj.get("name"), existing)
+
+
+def _extract_scorm_resource_names(content_list: Any) -> str:
+    """Return a bullet list of names of all SCORM resources in the content list.
+
+    content_list is the full $.content[*] array (list of dicts). Used to
+    split a mixed pending-resource batch into a SCORM-only sub-list so the
+    SCORM completion instructions aren't misapplied to non-SCORM resources.
+    Returns "" if there are no SCORM resources.
+    """
+    if not isinstance(content_list, list):
+        return ""
+    names = [
+        item.get("name")
+        for item in content_list
+        if isinstance(item, dict) and item.get("mimeType") == _SCORM_MIME and item.get("name")
+    ]
+    return _extract_all_names(names)
+
+
+def _extract_non_scorm_resource_names(content_list: Any) -> str:
+    """Return a bullet list of names of all non-SCORM resources in the content list.
+
+    Counterpart to _extract_scorm_resource_names — same content_list input,
+    complementary mimeType filter. Returns "" if there are no non-SCORM resources.
+    """
+    if not isinstance(content_list, list):
+        return ""
+    names = [
+        item.get("name")
+        for item in content_list
+        if isinstance(item, dict) and item.get("mimeType") != _SCORM_MIME and item.get("name")
+    ]
+    return _extract_all_names(names)
+
+
 def _extract_scorm_duration_minutes(content_list: Any) -> float:
     """Return the duration (in minutes) of the first SCORM resource in the content list.
 
@@ -2375,8 +2434,12 @@ _TRANSFORMS: dict[str, Any] = {
     "diff_missing_resource_ids":       _diff_missing_resource_ids,
     "append_resource_name":            _append_resource_name,
     "append_resource_name_to_list":    _append_resource_name_to_list,
+    "append_resource_name_if_scorm":     _append_resource_name_if_scorm,
+    "append_resource_name_if_non_scorm": _append_resource_name_if_non_scorm,
     "set_first_resource_name":         _set_first_resource_name,
     "extract_scorm_resource_name":     _extract_scorm_resource_name,
+    "extract_scorm_resource_names":    _extract_scorm_resource_names,
+    "extract_non_scorm_resource_names": _extract_non_scorm_resource_names,
     "extract_scorm_duration_minutes":  _extract_scorm_duration_minutes,
     "detect_assessment_only":          _detect_assessment_only,
     "calculate_remaining_attempts":    _calculate_remaining_attempts,

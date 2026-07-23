@@ -756,6 +756,12 @@ nodes:
           transform: extract_scorm_resource_name }
       - { from: "$.content[*]", to: collected.scorm_resource_duration_min,
           transform: extract_scorm_duration_minutes }
+      # Split the pending-resource batch into SCORM vs non-SCORM name lists so
+      # resolution_scorm_guidance can show each with its own instructions.
+      - { from: "$.content[*]", to: collected.scorm_resource_names,
+          transform: extract_scorm_resource_names }
+      - { from: "$.content[*]", to: collected.non_scorm_resource_names,
+          transform: extract_non_scorm_resource_names }
       - { from: "$.content[0].identifier", to: collected.assessment_id }
       - { from: "$.content[0].maxAttempts", to: collected.max_attempts }
       - { from: "$.content[0].maxAssessmentRetakeAttempts", to: collected.max_retake_attempts }
@@ -795,6 +801,13 @@ nodes:
     response_mapping:
       - { from: "$.content.name", to: collected.incomplete_resource_names,
           transform: append_resource_name, transform_ctx_key: collected.incomplete_resource_names }
+      # Composite search missed this resource's metadata entirely, so also fold
+      # its name into the correct SCORM/non-SCORM sub-list (mimeType-gated)
+      # used by resolution_scorm_guidance.
+      - { from: "$.content", to: collected.scorm_resource_names,
+          transform: append_resource_name_if_scorm, transform_ctx_key: collected.scorm_resource_names }
+      - { from: "$.content", to: collected.non_scorm_resource_names,
+          transform: append_resource_name_if_non_scorm, transform_ctx_key: collected.non_scorm_resource_names }
     on_success: loop_missing_resource_names
     on_error:
       # Skip on error and still advance the loop so remaining IDs are checked.
@@ -838,12 +851,18 @@ nodes:
     prompt:
       text: |
         We found that the following resource(s) are still **In Progress / Not Started**:
+        {% if ctx.collected.non_scorm_resource_names %}
 
-        {{ ctx.collected.incomplete_resource_names }}
+        List of Non-SCORM resources to be completed:
 
-        This resource is in **SCORM format**.
+        {{ ctx.collected.non_scorm_resource_names }}
+        {% endif %}
 
-        Please follow the instructions below carefully:
+        The List of  resource(s) are in **SCORM format**:
+
+        {{ ctx.collected.scorm_resource_names }}
+
+        Please follow the instructions below carefully to complete the SCORM resource(s):
 
         - Complete the resource in **one continuous session**.
         - **Do not increase the playback speed** while viewing the content.

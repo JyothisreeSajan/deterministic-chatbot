@@ -592,7 +592,7 @@ nodes:
       - "Click on the **Profile Icon** and select **View Profile**."
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update your Designation and click **Send for Approval**."
-      - "Once submitted, the request will be sent to the **Organization Admin** for approval. Once approved, your designation will reflect in your profile, and you can check if the Comprehensive Assessment Program (CAP) is visible."
+      - "Once submitted, the request will be sent to the **MDO Admin** for approval. Once approved, your designation will reflect in your profile, and you can check if the Comprehensive Assessment Program (CAP) is visible."
     next: satisfied
 
   - id: guide_profile_update
@@ -607,7 +607,7 @@ nodes:
       - "Click on the **Profile Icon** and select **View Profile**."
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update the incorrect fields and click **Send for Approval**."
-      - "Once submitted, the request will be sent to the **Organization Admin** for approval. Once approved, your details will reflect in your profile, and you can check if the Comprehensive Assessment Program (CAP) is visible."
+      - "Once submitted, the request will be sent to the **MDO Admin** for approval. Once approved, your details will reflect in your profile, and you can check if the Comprehensive Assessment Program (CAP) is visible."
     next: satisfied
 
 

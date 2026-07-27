@@ -113,8 +113,6 @@ nodes:
       url: "/api/user/private/v1/read/{{ ctx.user_id_hash }}"
     response_mapping:
       - { from: "$.response.firstName",                               to: collected.current_first_name }
-      - { from: "$.response.lastName",                                to: collected.current_last_name }
-      - { from: "$.response.profileDetails.personalDetails.surname",  to: collected.pd_surname }
     on_success: name_update_steps
     on_error:
       any: name_update_steps
@@ -126,8 +124,7 @@ nodes:
       text: |
         {% if ctx.collected.current_first_name %}
         Your current name on iGOT:
-        - **First Name:** {{ ctx.collected.current_first_name }}
-        - **Last Name:** {{ ctx.collected.pd_surname or ctx.collected.current_last_name or '(not set)' }}
+        - **Name:** {{ ctx.collected.current_first_name }}
 
         {% endif %}
         Here's how to update your name on iGOT:

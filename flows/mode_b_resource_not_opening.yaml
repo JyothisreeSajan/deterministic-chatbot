@@ -483,6 +483,11 @@ nodes:
         Subject: "Resource Not Opening — {{ ctx.collected.course_name | default('Course') }}"
         Description: include course name, resource name, channel ({{ ctx.channel }}), resource type, and email.
         If mobile device details (mobile model, app version) are provided, include them as well.
+      key_facts:
+        - { field: course_name,  label: "Course Name" }
+        - { field: course_id,    label: "Course DO ID" }
+        - { field: resource_name, label: "Resource Name" }
+        - { field: resource_id,  label: "Resource DO ID" }
       priority_override: P3
     on_complete: confirm_ticket
     on_restart: ask_device_type

@@ -2,12 +2,14 @@
 
 > Karmayogi platform APIs consumed by the chatbot, in execution order. Intended for iGot developers integrating or extending this workflow.
 
+> Implemented in `flows/mode_b_designation_not_verified.yaml` (flow_id `DESIGNATION_GROUP_NOT_VERIFIED`, menu entry "Designation / Group not verified"). The identical node graph and API sequence is also duplicated verbatim in `flows/mode_b_karmayogi_badge_check.yaml` (flow_id `KARMAYOGI_BADGE_CHECK`, menu entry "The Verified Karmayogi Badge is not visible.") — everything below applies to both flows.
+
 ---
 
 ## Execution Flow
 
 ```
-STEP 1   → POST /private/user/v1/search
+STEP 1   → POST /api/private/user/v1/search
                 ↓ Fetch user's full private profile — reads wfProfileDesignationRequest, wfProfileGroupRequest
                 ↓
            wfProfileDesignationRequest or wfProfileGroupRequest exists (has_pending_request = true)
@@ -18,7 +20,7 @@ STEP 1   → POST /private/user/v1/search
 
            No profile returned → return error; no further API calls
 
-STEP 2   → POST /private/user/v1/search        (pending request only)
+STEP 2   → POST /api/private/user/v1/search    (pending request only)
                 ↓ filters: channel = departmentName, role = MDO_ADMIN
                 ↓ Returns target dept's MDO_ADMIN contact
                 ↓
@@ -34,11 +36,11 @@ STEP 2   → POST /private/user/v1/search        (pending request only)
 
 > Fetches the user's private profile to determine whether a designation and/or group verification request is already pending. These fields are not available in the public read API.
 
-**Endpoint:** `POST /private/user/v1/search`
+**Endpoint:** `POST /api/private/user/v1/search`
 
 ```bash
 curl -X POST \
-  "https://portal.uat.karmayogibharat.net/private/user/v1/search" \
+  "https://portal.uat.karmayogibharat.net/api/private/user/v1/search" \
   -H "Content-Type: application/json" \
   -d '{
     "request": {
@@ -88,11 +90,11 @@ curl -X POST \
 
 > Fetches the MDO_ADMIN contact details for the target department so the user knows who will approve their pending designation/group request.
 
-**Endpoint:** `POST /private/user/v1/search`
+**Endpoint:** `POST /api/private/user/v1/search`
 
 ```bash
 curl -X POST \
-  "https://portal.uat.karmayogibharat.net/private/user/v1/search" \
+  "https://portal.uat.karmayogibharat.net/api/private/user/v1/search" \
   -H "Content-Type: application/json" \
   -d '{
     "request": {
@@ -145,6 +147,6 @@ curl -X POST \
 
 | Step | Endpoint | Method | Auth Required | Purpose | Key Fields |
 |---|---|---|---|---|---|
-| 1 | `/private/user/v1/search` | POST | Yes | Fetch private profile; read `wfProfileDesignationRequest`, `wfProfileGroupRequest`, `rootOrgId`, `designation`, `group` | `wfProfileDesignationRequest`, `wfProfileGroupRequest`, `rootOrgId`, `professionalDetails` |
-| 2 (pending request only) | `/private/user/v1/search` | POST | Yes | Fetch MDO_ADMIN contact for target department | `firstname`, `surname`, `primaryEmail` |
+| 1 | `/api/private/user/v1/search` | POST | Yes | Fetch private profile; read `wfProfileDesignationRequest`, `wfProfileGroupRequest`, `rootOrgId`, `designation`, `group` | `wfProfileDesignationRequest`, `wfProfileGroupRequest`, `rootOrgId`, `professionalDetails` |
+| 2 (pending request only) | `/api/private/user/v1/search` | POST | Yes | Fetch MDO_ADMIN contact for target department | `firstname`, `surname`, `primaryEmail` |
 | — (fallback) | YP Allocation File | — | — | Static YP lookup by org channel when no MDO_ADMIN found | `yp_name`, `yp_email` |

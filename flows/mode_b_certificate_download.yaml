@@ -355,11 +355,15 @@ nodes:
         request:
           filters:
             identifier: "{{ ctx.collected.c1_incomplete_ids }}"
+            # Live only — see mode_b_course_progress_issue.yaml's api_fetch_resource_metadata
+            # for why: querying Draft/Review/Retired alongside Live also matches a resource's
+            # leftover Draft working-copy (same identifier, disconnected from the collection
+            # tree) left behind by any edit/republish, producing a duplicate name in the
+            # displayed list. c1_branch_on_missing_resource_names → c1_fetch_resource_name_fallback
+            # already covers any leaf resource with genuinely no Live doc via an unfiltered
+            # per-id content/v1/read lookup.
             status:
               - "Live"
-              - "Review"
-              - "Draft"
-              - "Retired"
           isSecureSettingsDisabled: true
           sort_by:
             createdOn: "desc"

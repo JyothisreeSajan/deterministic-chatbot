@@ -708,15 +708,17 @@ nodes:
             # The API returns metadata only for the pending resources; no client-side
             # filtering against incomplete_ids is needed.
             identifier: "{{ ctx.collected.incomplete_ids }}"
-            # Explicitly include all statuses so that resources in Draft / Review /
-            # Retired state (common for leaf nodes the user has never opened) are
-            # returned. Without this filter the API defaults to Live-only and the
-            # content array comes back empty → blank resource name in the message.
+            # Live only. A resource that's ever been edited/republished leaves its
+            # prior Draft working-copy behind in the content index under the SAME
+            # identifier (disconnected from the collection tree, unlike the current
+            # Live doc) — querying Draft/Review/Retired alongside Live matches that
+            # leftover too, producing a duplicate hit (and duplicate displayed name)
+            # for every such resource. Any leaf resource with genuinely no Live doc
+            # (rare — Draft/Retired-only) is still covered: branch_on_missing_resource_names
+            # routes it to api_fetch_resource_name_fallback, which reads it directly by
+            # id via content/v1/read (not status-filtered) so its name still surfaces.
             status:
               - "Live"
-              - "Review"
-              - "Draft"
-              - "Retired"
           isSecureSettingsDisabled: true
           sort_by:
             createdOn: "desc"

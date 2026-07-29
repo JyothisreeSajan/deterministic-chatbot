@@ -542,7 +542,7 @@ nodes:
         **Summary of Request:**
         The course access criteria don't match your current profile, and we could not locate an MDO or YP contact for your organization to help resolve this. You would like us to investigate this further.
 
-        • **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
+        - **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: yp_not_found_raise_ticket

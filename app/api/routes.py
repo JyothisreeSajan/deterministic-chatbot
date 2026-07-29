@@ -522,8 +522,8 @@ async def submit_turn(
             else:
                 await _store.refresh(session["user_id_hash"], session["ttl_minutes"])
 
+        _ticket_id = (result.get("collected") or {}).get("ticket_id")
         if result_status in _TERMINAL_STATUSES:
-            _ticket_id = result.get("zoho_ticket_id")
             log.info(
                 "[activity] event=flow_ended  session=%s  user=%s  flow=%s  outcome=%s  ticket=%s",
                 sid, user_id_hash, flow_id, result_status, _ticket_id or "-",
@@ -564,6 +564,7 @@ async def submit_turn(
             status=result_status,
             flow_id=flow_id,
             current_node=result.get("current_node"),
+            ticket_id=_ticket_id if result_status in _TERMINAL_STATUSES else None,
         )
 
     # ── Phase: active flow ────────────────────────────────────────────────────
@@ -686,8 +687,9 @@ async def submit_turn(
                 "next_node": result.get("current_node"),
                 "status": str(result_status),
             }
-            if result.get("zoho_ticket_id"):
-                _out["ticket_id"] = result["zoho_ticket_id"]
+            _turn_ticket_id = (result.get("collected") or {}).get("ticket_id")
+            if _turn_ticket_id:
+                _out["ticket_id"] = _turn_ticket_id
             tracing.set_span_io(input={"user": _user_label, "node": _current_node}, output=_out)
     except Exception:  # noqa: BLE001
         log.exception("Flow resume error for session %s", sid)
@@ -712,9 +714,9 @@ async def submit_turn(
         session.setdefault("node_path", []).append(_next_node)
 
     _store = getattr(request.app.state, "session_store", None)
+    _ticket_id = (result.get("collected") or {}).get("ticket_id")
     if result_status in _TERMINAL_STATUSES:
         session["status"] = "done"
-        _ticket_id = result.get("zoho_ticket_id")
         log.info(
             "[activity] event=flow_ended  session=%s  user=%s  flow=%s  outcome=%s  ticket=%s",
             sid, session["user_id_hash"], flow_id, result_status, _ticket_id or "-",
@@ -760,6 +762,7 @@ async def submit_turn(
         status=result_status,
         flow_id=flow_id,
         current_node=result.get("current_node"),
+        ticket_id=_ticket_id if result_status in _TERMINAL_STATUSES else None,
     )
 
 

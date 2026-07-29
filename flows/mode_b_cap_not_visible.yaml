@@ -673,7 +673,7 @@ nodes:
         **Summary of Request:**
         Your Comprehensive Assessment Program (CAP) is not visible, and we could not locate an MDO Admin or YP/AM contact for your organization to help resolve this. You would like us to investigate this further.
 
-        • **Organization:** {{ ctx.collected.org_name or ctx.collected.org_channel | default('Not identified') }}
+        - **Organization:** {{ ctx.collected.org_name or ctx.collected.org_channel | default('Not identified') }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: yp_not_found_raise_ticket
@@ -996,7 +996,7 @@ nodes:
         {{ ctx.collected.cap_other_error_description }}
 
         {% if ctx.collected.course_name %}
-        • **CAP:** {{ ctx.collected.course_name }}
+        - **CAP:** {{ ctx.collected.course_name }}
         {% endif %}
 
         Please review the details above and confirm whether they are correct.
@@ -1368,7 +1368,7 @@ nodes:
         **Summary of Request:**
         You reported that a technical issue is affecting one or more child courses under your Comprehensive Assessment Program (CAP). You would like the technical team to review this and update the backend accordingly.
         {% if ctx.collected.course_name %}
-        • **CAP:** {{ ctx.collected.course_name }}
+        - **CAP:** {{ ctx.collected.course_name }}
         {% endif %}
 
         Please review the details above and confirm whether they are correct.

@@ -419,7 +419,7 @@ nodes:
         **Summary of Request:**
         You reported that a technical issue has been detected affecting one or more resources where the enrollment status and admin content state are mismatched. You would like us to investigate this issue.
         
-        • **Course / Program / Event:** {{ ctx.collected.course_name or 'Selected content' }}
+        - **Course / Program / Event:** {{ ctx.collected.course_name or 'Selected content' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: technical_issue_auto_ticket
@@ -635,7 +635,7 @@ nodes:
         **Summary of Request:**
         We've completed re-validation of your progress for **{{ ctx.collected.course_name }}**. No technical issue was identified, but the certificate has still not been generated. You would like us to investigate this issue.
 
-        • **Course / Program / Event:** {{ ctx.collected.course_name or 'Selected content' }}
+        - **Course / Program / Event:** {{ ctx.collected.course_name or 'Selected content' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: cert_not_generated_auto_ticket
@@ -1084,7 +1084,7 @@ nodes:
         {{ ctx.collected.error_description }}
 
         {% if ctx.collected.course_name %}
-        • **Course:** {{ ctx.collected.course_name }}
+        - **Course:** {{ ctx.collected.course_name }}
         {% endif %}
 
         Please review the details above and confirm whether they are correct.
@@ -1212,7 +1212,7 @@ nodes:
         **Summary of Request:**
         You reported that upon revalidation, a technical issue has been confirmed affecting your progress. You would like us to investigate this issue where the enrollment and admin content states are still mismatched.
         
-        • **Course / Program / Event:** {{ ctx.collected.course_name or 'Selected content' }}
+        - **Course / Program / Event:** {{ ctx.collected.course_name or 'Selected content' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: technical_issue_auto_ticket

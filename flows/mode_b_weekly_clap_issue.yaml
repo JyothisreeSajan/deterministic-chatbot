@@ -508,7 +508,7 @@ nodes:
         **Summary of Request:**
         You reported that your weekly activity data shows you met the 60-minute threshold across all tracked weeks, but the weekly clap was not credited. You would like us to investigate this technical discrepancy.
         {% if ctx.collected.total_claps is not none %}
-        • **Current Weekly Clap Count:** {{ ctx.collected.total_claps }}
+        - **Current Weekly Clap Count:** {{ ctx.collected.total_claps }}
         {% endif %}
 
         Please review the details above and confirm whether they are correct.
@@ -524,7 +524,7 @@ nodes:
         **Summary of Request:**
         You reported that your recorded activity time does not match your actual time spent on the platform. You would like us to investigate this discrepancy.
         {% if ctx.collected.total_claps is not none %}
-        • **Current Weekly Clap Count:** {{ ctx.collected.total_claps }}
+        - **Current Weekly Clap Count:** {{ ctx.collected.total_claps }}
         {% endif %}
 
         Please review the details above and confirm whether they are correct.

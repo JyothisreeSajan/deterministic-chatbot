@@ -229,7 +229,7 @@ nodes:
         **Summary of Request:**
         You reported that the video for the event is missing. You would like us to investigate this content configuration issue.
         
-        • **Event:** {{ ctx.collected.event_name or 'Selected event' }}
+        - **Event:** {{ ctx.collected.event_name or 'Selected event' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: auto_ticket_uc1
@@ -306,7 +306,7 @@ nodes:
         **Summary of Request:**
         You reported that the video for the event is not playing due to an invalid configuration. You would like us to investigate this technical issue.
         
-        • **Event:** {{ ctx.collected.event_name or 'Selected event' }}
+        - **Event:** {{ ctx.collected.event_name or 'Selected event' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: auto_ticket_uc2
@@ -367,7 +367,7 @@ nodes:
         **Summary of Request:**
         You reported that the video for the event is still not playing despite following the standard troubleshooting steps. You would like us to investigate this technical issue.
         
-        • **Event:** {{ ctx.collected.event_name or 'Selected event' }}
+        - **Event:** {{ ctx.collected.event_name or 'Selected event' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: auto_ticket_uc2_persists
@@ -415,7 +415,7 @@ nodes:
         **Summary of Request:**
         You reported that your progress for the event is not updating, even though you have met the completion criteria. You would like us to investigate this technical issue.
         
-        • **Event:** {{ ctx.collected.event_name or 'Selected event' }}
+        - **Event:** {{ ctx.collected.event_name or 'Selected event' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: auto_ticket_uc3
@@ -480,7 +480,7 @@ nodes:
         **Summary of Request:**
         You reported that your certificate for the event has not been generated, even though you have met the completion criteria. You would like us to investigate this technical issue.
         
-        • **Event:** {{ ctx.collected.event_name or 'Selected event' }}
+        - **Event:** {{ ctx.collected.event_name or 'Selected event' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: auto_ticket_uc4

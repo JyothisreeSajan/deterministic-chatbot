@@ -302,7 +302,7 @@ nodes:
         **Summary of Request:**
         You reported that your learning progress is not reflecting, but no MDO Admin could be located for your organization to help resolve this. You would like us to investigate this further.
 
-        • **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
+        - **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: raise_ticket_no_mdo

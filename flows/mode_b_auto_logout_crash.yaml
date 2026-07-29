@@ -122,9 +122,9 @@ nodes:
         **Summary of Request:**
         You reported that you are experiencing an auto logout or application crash issue on your Android device. You would like us to investigate this technical issue further.
         
-        • **Device Name:** {{ ctx.collected.device_name }}
-        • **Device Model:** {{ ctx.collected.device_model }}
-        • **Android Version:** {{ ctx.collected.android_version }}
+        - **Device Name:** {{ ctx.collected.device_name }}
+        - **Device Model:** {{ ctx.collected.device_model }}
+        - **Android Version:** {{ ctx.collected.android_version }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: android_raise_ticket
@@ -187,9 +187,9 @@ nodes:
         **Summary of Request:**
         You reported that you are experiencing an auto logout or application crash issue on your iOS device. You would like us to investigate this technical issue further.
         
-        • **Device Name:** {{ ctx.collected.device_name }}
-        • **Device Model:** {{ ctx.collected.device_model }}
-        • **iOS Version:** {{ ctx.collected.ios_version }}
+        - **Device Name:** {{ ctx.collected.device_name }}
+        - **Device Model:** {{ ctx.collected.device_model }}
+        - **iOS Version:** {{ ctx.collected.ios_version }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: ios_raise_ticket

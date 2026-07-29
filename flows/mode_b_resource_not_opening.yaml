@@ -268,10 +268,10 @@ nodes:
         **Summary of Request:**
         You reported that the resource is not opening on your mobile device even after switching to Desktop Mode. You would like us to investigate this issue further.
         
-        • **Course:** {{ ctx.collected.course_name }}
-        • **Resource:** {{ ctx.collected.resource_name }}
-        • **Mobile Model:** {{ ctx.collected.mobile_model }}
-        {% if ctx.collected.app_version %}• **App Version:** {{ ctx.collected.app_version }}{% endif %}
+        - **Course:** {{ ctx.collected.course_name }}
+        - **Resource:** {{ ctx.collected.resource_name }}
+        - **Mobile Model:** {{ ctx.collected.mobile_model }}
+        {% if ctx.collected.app_version %}- **App Version:** {{ ctx.collected.app_version }}{% endif %}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: resource_auto_ticket
@@ -360,8 +360,8 @@ nodes:
         **Summary of Request:**
         You reported that the YouTube resource is not opening despite YouTube not being restricted on your network. You would like us to investigate this issue further.
 
-        • **Course:** {{ ctx.collected.course_name }}
-        • **Resource:** {{ ctx.collected.resource_name }}
+        - **Course:** {{ ctx.collected.course_name }}
+        - **Resource:** {{ ctx.collected.resource_name }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: resource_auto_ticket
@@ -380,9 +380,9 @@ nodes:
       text: |
         **Summary of Request:**
         You reported that the YouTube resource is not opening due to a possible configuration issue. You would like us to investigate this issue further.
-        
-        • **Course:** {{ ctx.collected.course_name }}
-        • **Resource:** {{ ctx.collected.resource_name }}
+
+        - **Course:** {{ ctx.collected.course_name }}
+        - **Resource:** {{ ctx.collected.resource_name }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: resource_auto_ticket
@@ -398,7 +398,7 @@ nodes:
         **Summary of Request:**
         You reported a resource/content opening issue and it could not be resolved through self-service steps. You would like us to investigate this issue further.
 
-        • **Course:** {{ ctx.collected.course_name }}
+        - **Course:** {{ ctx.collected.course_name }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: resource_auto_ticket
@@ -421,8 +421,8 @@ nodes:
         **Summary of Request:**
         You reported that a SCORM format resource is not opening. You would like us to investigate this issue further.
 
-        • **Course:** {{ ctx.collected.course_name }}
-        • **Resource:** {{ ctx.collected.resource_name }}
+        - **Course:** {{ ctx.collected.course_name }}
+        - **Resource:** {{ ctx.collected.resource_name }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: resource_auto_ticket
@@ -459,8 +459,8 @@ nodes:
         **Summary of Request:**
         You reported that {{ r_type }} is not opening. You would like us to investigate this issue further.
 
-        • **Course:** {{ ctx.collected.course_name }}
-        • **Resource:** {{ ctx.collected.resource_name }}
+        - **Course:** {{ ctx.collected.course_name }}
+        - **Resource:** {{ ctx.collected.resource_name }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: resource_auto_ticket
@@ -511,7 +511,7 @@ nodes:
         **Summary of Request:**
         You reported a resource/content opening issue and no resources could be found in the selected course. You would like us to investigate this issue further.
 
-        • **Course:** {{ ctx.collected.course_name }}
+        - **Course:** {{ ctx.collected.course_name }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: resource_auto_ticket

@@ -264,8 +264,8 @@ nodes:
         **Summary of Request:**
         The Email ID {{ ctx.collected.new_identifier }} cannot be updated because its domain is not whitelisted, and we could not locate a YP contact for your organization to help resolve this. You would like us to investigate this further.
 
-        • **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
-        • **Email ID to be Updated:** {{ ctx.collected.new_identifier }}
+        - **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
+        - **Email ID to be Updated:** {{ ctx.collected.new_identifier }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: yp_not_found_raise_ticket
@@ -595,8 +595,8 @@ nodes:
         **Summary of Request:**
         You reported that you would like to update your {{ 'Email ID' if ctx.collected.update_type == 'EMAIL' else 'Mobile Number' }}. You would like us to raise a support request for this change.
 
-        • **Current {{ 'Email ID' if ctx.collected.update_type == 'EMAIL' else 'Mobile Number' }}:** {{ (ctx.collected.current_email or "(your registered identifier)") if ctx.collected.update_type == 'EMAIL' else (ctx.collected.current_phone or "(your registered identifier)") }}
-        • **{{ 'Email ID' if ctx.collected.update_type == 'EMAIL' else 'Mobile Number' }} to be Updated:** {{ ctx.collected.new_identifier }}
+        - **Current {{ 'Email ID' if ctx.collected.update_type == 'EMAIL' else 'Mobile Number' }}:** {{ (ctx.collected.current_email or "(your registered identifier)") if ctx.collected.update_type == 'EMAIL' else (ctx.collected.current_phone or "(your registered identifier)") }}
+        - **{{ 'Email ID' if ctx.collected.update_type == 'EMAIL' else 'Mobile Number' }} to be Updated:** {{ ctx.collected.new_identifier }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: raise_support_ticket

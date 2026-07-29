@@ -300,11 +300,11 @@ nodes:
         **Summary of Request:**
         The course/program has been completed and more than 24 hours have passed, but the certificate has not been issued yet. You would like us to investigate and issue the certificate.
 
-        • **Course Name:** {{ ctx.collected.c1_course_name }}
+        - **Course Name:** {{ ctx.collected.c1_course_name }}
 
-        • **Registered Email ID:** {{ ctx.collected.email }}
+        - **Registered Email ID:** {{ ctx.collected.email }}
 
-        • **Mobile Number:** {{ ctx.collected.mobile }}
+        - **Mobile Number:** {{ ctx.collected.mobile }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: c1_cert_delayed_raise_ticket
@@ -706,7 +706,7 @@ nodes:
         **Summary of Request:**
         You reported that your certificate issue could not be resolved through standard troubleshooting steps. You would like us to investigate this issue further.
         
-        • **Course:** {{ ctx.collected.c1_course_name or 'Selected course' }}
+        - **Course:** {{ ctx.collected.c1_course_name or 'Selected course' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: generic_auto_ticket

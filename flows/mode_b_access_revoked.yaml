@@ -699,7 +699,7 @@ nodes:
         **Summary of Request:**
         You reported that your access was revoked and you need help raising a transfer request, but no MDO Admin or YP/SPOC contact could be located for your organization. You would like us to investigate this further.
 
-        • **Organization/Ministry/State:** {{ ctx.collected.dropdown_org_name or ctx.collected.transfer_org_name or ctx.collected.selected_parent_name or ctx.collected.fetched_org_name or 'Not identified' }}
+        - **Organization/Ministry/State:** {{ ctx.collected.dropdown_org_name or ctx.collected.transfer_org_name or ctx.collected.selected_parent_name or ctx.collected.fetched_org_name or 'Not identified' }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: raise_ticket_no_contact

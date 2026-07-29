@@ -1388,7 +1388,7 @@ nodes:
         - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
         {% endif %}
         {% if ctx.collected.mdo_admin_email %}
-        • **MDO Email:** {{ ctx.collected.mdo_admin_email }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email }}
         {% endif %}
     next: satisfied
 
@@ -1608,10 +1608,10 @@ nodes:
       text: |
         Since the MDO Admin for your organisation isn't currently available in the system, please contact the concerned **Young Professional (YP)** for further assistance:
 
-        • **YP Name:** {{ ctx.collected.yp_name }}
-        • **YP Email ID:** {{ ctx.collected.yp_email }}
+        - **YP Name:** {{ ctx.collected.yp_name }}
+        - **YP Email ID:** {{ ctx.collected.yp_email }}
         {% if ctx.collected.yp_mobile %}
-        • **YP Mobile:** {{ ctx.collected.yp_mobile }}
+        - **YP Mobile:** {{ ctx.collected.yp_mobile }}
         {% endif %}
     next: satisfied
 
@@ -1634,7 +1634,7 @@ nodes:
         **Summary of Request:**
         You reported a profile update issue, but there is currently no MDO Admin available to assist, and we could not locate a YP contact for your organisation either. You would like us to investigate this further.
 
-        • **Organisation:** {{ ctx.collected.org_channel | default('Not identified') }}
+        - **Organisation:** {{ ctx.collected.org_channel | default('Not identified') }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: yp_not_found_raise_ticket

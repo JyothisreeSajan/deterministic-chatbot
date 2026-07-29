@@ -253,7 +253,7 @@ nodes:
         It is part of your Training Plan (ACBP) but has not been fully credited. You would
         like us to investigate this discrepancy.
 
-        • **Course:** {{ ctx.collected.kc_kp_status.course_name | default(ctx.collected.kc_course_name) }}
+        - **Course:** {{ ctx.collected.kc_kp_status.course_name | default(ctx.collected.kc_course_name) }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: kc_training_plan_auto_ticket
@@ -306,7 +306,7 @@ nodes:
         You are within the monthly limit, but the points have not been credited. You
         would like us to investigate this discrepancy.
 
-        • **Course:** {{ ctx.collected.kc_kp_status.course_name | default(ctx.collected.kc_course_name) }}
+        - **Course:** {{ ctx.collected.kc_kp_status.course_name | default(ctx.collected.kc_course_name) }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: kc_non_acbp_auto_ticket
@@ -344,7 +344,7 @@ nodes:
         Neither completion nor rating points have been credited. You would like us to
         investigate this discrepancy.
 
-        • **Course:** {{ ctx.collected.kc_course_name | default('this course') }}
+        - **Course:** {{ ctx.collected.kc_course_name | default('this course') }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: kc_no_points_auto_ticket
@@ -493,7 +493,7 @@ nodes:
         You attended the event live (within the 4-hour participation window), but the
         karma points have not been credited. You would like us to investigate this discrepancy.
 
-        • **Event:** {{ ctx.collected.ev_course_name }}
+        - **Event:** {{ ctx.collected.ev_course_name }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: ev_kp_not_credited_auto_ticket
@@ -633,8 +633,8 @@ nodes:
         so it should have credited **15 points**, but a different amount was recorded.
         You would like us to investigate this discrepancy.
 
-        • **Course:** {{ ctx.collected.ec1_kp_status.course_name | default(ctx.collected.ec1_course_name) }}
-        • **Points Credited:** {{ ctx.collected.ec1_kp_status.completion_points }}
+        - **Course:** {{ ctx.collected.ec1_kp_status.course_name | default(ctx.collected.ec1_course_name) }}
+        - **Points Credited:** {{ ctx.collected.ec1_kp_status.completion_points }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: ec1_mismatch_15_auto_ticket
@@ -674,8 +674,8 @@ nodes:
         should have credited **10 points**, but a different amount was recorded. You
         would like us to investigate this discrepancy.
 
-        • **Course:** {{ ctx.collected.ec1_kp_status.course_name | default(ctx.collected.ec1_course_name) }}
-        • **Points Credited:** {{ ctx.collected.ec1_kp_status.completion_points }}
+        - **Course:** {{ ctx.collected.ec1_kp_status.course_name | default(ctx.collected.ec1_course_name) }}
+        - **Points Credited:** {{ ctx.collected.ec1_kp_status.completion_points }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: ec1_mismatch_10_auto_ticket

@@ -663,7 +663,7 @@ nodes:
         **Summary of Request:**
         Your training plan/APAR courses are not visible, and we could not locate an MDO Admin or YP/AM contact for your organization to help resolve this. You would like us to investigate this further.
 
-        • **Organization:** {{ ctx.collected.org_name or ctx.collected.org_channel | default('Not identified') }}
+        - **Organization:** {{ ctx.collected.org_name or ctx.collected.org_channel | default('Not identified') }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: yp_not_found_raise_ticket

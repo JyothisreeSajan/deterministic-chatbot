@@ -202,6 +202,7 @@ class LLMAdapter:
             except Exception:  # noqa: BLE001
                 pass
             tracing.update_current_generation(
+                model=self.model_name,
                 output={"role": "assistant", "content": _trace_out},
                 usage_input=in_tok, usage_output=out_tok,
             )
@@ -248,6 +249,7 @@ class LLMAdapter:
             except Exception:  # noqa: BLE001
                 pass
             tracing.update_current_generation(
+                model=self.model_name,
                 output={"role": "assistant", "content": _trace_out},
                 usage_input=in_tok, usage_output=out_tok,
             )
@@ -314,6 +316,7 @@ class LLMAdapter:
             except Exception:  # noqa: BLE001
                 pass
             tracing.update_current_generation(
+                model=self.model_name,
                 output={"role": "assistant", "content": _trace_out},
                 usage_input=in_tok, usage_output=out_tok,
             )

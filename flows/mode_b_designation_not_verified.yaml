@@ -283,7 +283,7 @@ nodes:
         **Summary of Request:**
         Your designation/group verification request has already been submitted, but there is currently no MDO Admin available to approve it, and we could not locate a YP contact for your organization either. You would like us to investigate this further.
 
-        • **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
+        - **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 
         Please review the details above and confirm whether they are correct.
     on_confirm: yp_not_found_raise_ticket

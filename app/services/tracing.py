@@ -345,6 +345,27 @@ def record_session_end(
 
 # ── LLM generation span ────────────────────────────────────────────────────────
 
+# USD price per token, keyed by model-name prefix (longest prefix wins, so
+# "gemini-2.5-flash-lite" resolves separately from "gemini-2.5-flash"). Langfuse
+# self-hosted only ships default prices for models known at that app version, so
+# cost is computed here rather than relying on server-side price matching.
+# Source: Vertex AI pricing page — verify against current rates before trusting
+# this for billing, and add an entry whenever GENAI_MODEL_NAME changes.
+_MODEL_PRICING_PER_TOKEN: dict[str, tuple[float, float]] = {
+    "gemini-2.5-flash-lite": (0.10 / 1_000_000, 0.40 / 1_000_000),
+    "gemini-2.5-flash": (0.30 / 1_000_000, 2.50 / 1_000_000),
+}
+
+
+def _lookup_price(model: str) -> tuple[float, float] | None:
+    """Match `model` against _MODEL_PRICING_PER_TOKEN; longest matching prefix wins."""
+    best_key: str | None = None
+    for key in _MODEL_PRICING_PER_TOKEN:
+        if model.startswith(key) and (best_key is None or len(key) > len(best_key)):
+            best_key = key
+    return _MODEL_PRICING_PER_TOKEN[best_key] if best_key is not None else None
+
+
 @contextmanager
 def generation_span(*, model: str, operation: str, prompt_len: int = 0, span_input: Any = None):
     """Context manager: record one LLM call as a Langfuse generation child span.
@@ -385,12 +406,16 @@ def generation_span(*, model: str, operation: str, prompt_len: int = 0, span_inp
 
 def update_current_generation(
     *,
+    model: str | None = None,
     output: Any = None,
     usage_input: int | None = None,
     usage_output: int | None = None,
 ) -> None:
-    """Update the active LLM generation span with output and token counts.
+    """Update the active LLM generation span with output, token counts, and cost.
 
+    model:         Model name (same value passed to generation_span) — used to look
+                   up per-token pricing so cost is computed client-side instead of
+                   depending on Langfuse server-side model price config.
     output:        LLM response — pass a parsed dict/list for structured JSON rendering
                    in Langfuse, or a truncated string as fallback.
     usage_input:   Input token count (from SDK response if available).
@@ -408,6 +433,16 @@ def update_current_generation(
                 k: v for k, v in [("input", usage_input), ("output", usage_output)]
                 if v is not None
             }
+            price = _lookup_price(model) if model else None
+            if price is not None:
+                in_price, out_price = price
+                in_cost = (usage_input or 0) * in_price
+                out_cost = (usage_output or 0) * out_price
+                kwargs["cost_details"] = {
+                    "input": in_cost,
+                    "output": out_cost,
+                    "total": in_cost + out_cost,
+                }
         if kwargs:
             _client.update_current_generation(**kwargs)
     except Exception as exc:  # noqa: BLE001

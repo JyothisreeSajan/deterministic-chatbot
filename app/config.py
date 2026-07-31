@@ -92,6 +92,9 @@ class Settings(BaseSettings):
     langfuse_host: str = ""
     # Sample rate 0.0–1.0 (1.0 = trace every request, 0.1 = 10% sampling)
     langfuse_sample_rate: float = 1.0
+    # Environment tag shown on every trace in the Langfuse UI. Set explicitly per
+    # deployment (e.g. dev / staging / prod) — independent of IGOT_ENV.
+    langfuse_environment: str = "default"
 
     # Presidio
     presidio_enabled: bool = True

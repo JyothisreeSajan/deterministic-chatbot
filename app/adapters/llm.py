@@ -13,9 +13,12 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from typing import Any
 
 from app.config import settings
+
+log = logging.getLogger(__name__)
 
 # ── Prompts ────────────────────────────────────────────────────────────────────
 
@@ -141,18 +144,26 @@ class LLMAdapter:
         return response.text.strip(), response.usage_metadata
 
     @staticmethod
-    def _token_counts(usage: Any) -> tuple[int, int]:
-        """Extract (input_tokens, output_tokens) from Gemini usage_metadata.
+    def _token_counts(usage: Any) -> tuple[int, int, int]:
+        """Extract (input_tokens, output_tokens, thinking_tokens) from Gemini usage_metadata.
 
-        Gemini bills thinking tokens at the output rate (included in
-        candidates_token_count), so no adjustment is needed — pass counts as-is.
-        thoughts_token_count is informational only.
+        thoughts_token_count is reported separately from candidates_token_count
+        (it is NOT included in it), but Gemini bills it at the output token rate —
+        callers must add it to output cost explicitly.
         """
         if usage is None:
-            return 0, 0
+            return 0, 0, 0
         prompt = getattr(usage, "prompt_token_count", 0) or 0
         candidates = getattr(usage, "candidates_token_count", 0) or 0
-        return prompt, candidates
+        thinking = getattr(usage, "thoughts_token_count", 0) or 0
+        total = getattr(usage, "total_token_count", 0) or (prompt + candidates + thinking)
+
+        log.debug(
+            "[llm] token usage — input=%d thinking=%d output=%d total=%d",
+            prompt, thinking, candidates, total,
+        )
+
+        return prompt, candidates, thinking
 
     @staticmethod
     def _parse_json(raw: str) -> Any:
@@ -195,7 +206,7 @@ class LLMAdapter:
             ],
         ):
             raw, usage = await self._call(full_prompt)
-            in_tok, out_tok = self._token_counts(usage)
+            in_tok, out_tok, think_tok = self._token_counts(usage)
             _trace_out: Any = raw[:800]
             try:
                 _trace_out = self._parse_json(raw)
@@ -204,7 +215,7 @@ class LLMAdapter:
             tracing.update_current_generation(
                 model=self.model_name,
                 output={"role": "assistant", "content": _trace_out},
-                usage_input=in_tok, usage_output=out_tok,
+                usage_input=in_tok, usage_output=out_tok, usage_thinking=think_tok,
             )
         return self._parse_json(raw)
 
@@ -242,7 +253,7 @@ class LLMAdapter:
             ],
         ):
             raw, usage = await self._call(prompt)
-            in_tok, out_tok = self._token_counts(usage)
+            in_tok, out_tok, think_tok = self._token_counts(usage)
             _trace_out: Any = raw[:200]
             try:
                 _trace_out = self._parse_json(raw)
@@ -251,7 +262,7 @@ class LLMAdapter:
             tracing.update_current_generation(
                 model=self.model_name,
                 output={"role": "assistant", "content": _trace_out},
-                usage_input=in_tok, usage_output=out_tok,
+                usage_input=in_tok, usage_output=out_tok, usage_thinking=think_tok,
             )
         result = self._parse_json(raw)
 
@@ -309,7 +320,7 @@ class LLMAdapter:
             ],
         ):
             raw, usage = await self._call(prompt)
-            in_tok, out_tok = self._token_counts(usage)
+            in_tok, out_tok, think_tok = self._token_counts(usage)
             _trace_out: Any = raw[:800]
             try:
                 _trace_out = self._parse_json(raw)
@@ -318,7 +329,7 @@ class LLMAdapter:
             tracing.update_current_generation(
                 model=self.model_name,
                 output={"role": "assistant", "content": _trace_out},
-                usage_input=in_tok, usage_output=out_tok,
+                usage_input=in_tok, usage_output=out_tok, usage_thinking=think_tok,
             )
         result = self._parse_json(raw)
         if not isinstance(result, list):

@@ -78,11 +78,12 @@ def init() -> None:
             secret_key=settings.langfuse_secret_key,
             host=host,
             sample_rate=settings.langfuse_sample_rate,
+            environment=settings.langfuse_environment,
         )
         _enabled = True
         log.info(
-            "[tracing] Langfuse enabled. host=%s  sample_rate=%s",
-            host, settings.langfuse_sample_rate,
+            "[tracing] Langfuse enabled. host=%s  sample_rate=%s  environment=%s",
+            host, settings.langfuse_sample_rate, settings.langfuse_environment,
         )
     except Exception as exc:  # noqa: BLE001
         log.error("[tracing] Failed to init Langfuse — tracing disabled. error=%s", exc)
@@ -410,16 +411,19 @@ def update_current_generation(
     output: Any = None,
     usage_input: int | None = None,
     usage_output: int | None = None,
+    usage_thinking: int | None = None,
 ) -> None:
     """Update the active LLM generation span with output, token counts, and cost.
 
-    model:         Model name (same value passed to generation_span) — used to look
-                   up per-token pricing so cost is computed client-side instead of
-                   depending on Langfuse server-side model price config.
-    output:        LLM response — pass a parsed dict/list for structured JSON rendering
-                   in Langfuse, or a truncated string as fallback.
-    usage_input:   Input token count (from SDK response if available).
-    usage_output:  Output token count.
+    model:          Model name (same value passed to generation_span) — used to look
+                    up per-token pricing so cost is computed client-side instead of
+                    depending on Langfuse server-side model price config.
+    output:         LLM response — pass a parsed dict/list for structured JSON rendering
+                    in Langfuse, or a truncated string as fallback.
+    usage_input:    Input token count (from SDK response if available).
+    usage_output:   Output token count.
+    usage_thinking: Thinking/reasoning token count. Reported separately from
+                    usage_output by Gemini, but billed at the output token rate.
     No-op when tracing is disabled.
     """
     if not _enabled or _client is None:
@@ -428,9 +432,13 @@ def update_current_generation(
         kwargs: dict[str, Any] = {}
         if output is not None:
             kwargs["output"] = output
-        if usage_input is not None or usage_output is not None:
+        if usage_input is not None or usage_output is not None or usage_thinking is not None:
             kwargs["usage_details"] = {
-                k: v for k, v in [("input", usage_input), ("output", usage_output)]
+                k: v for k, v in [
+                    ("input", usage_input),
+                    ("output", usage_output),
+                    ("thinking", usage_thinking),
+                ]
                 if v is not None
             }
             price = _lookup_price(model) if model else None
@@ -438,10 +446,12 @@ def update_current_generation(
                 in_price, out_price = price
                 in_cost = (usage_input or 0) * in_price
                 out_cost = (usage_output or 0) * out_price
+                think_cost = (usage_thinking or 0) * out_price  # billed at output rate
                 kwargs["cost_details"] = {
                     "input": in_cost,
                     "output": out_cost,
-                    "total": in_cost + out_cost,
+                    "thinking": think_cost,
+                    "total": in_cost + out_cost + think_cost,
                 }
         if kwargs:
             _client.update_current_generation(**kwargs)

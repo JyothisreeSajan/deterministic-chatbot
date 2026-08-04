@@ -32,8 +32,8 @@ metadata:
   menu_order:       1
   classification:   Query
   default_portal:   Learner Portal
-  default_priority: P4
-  default_severity: Sev 4
+  default_priority: P3
+  default_severity: Sev 3
 
 enabled_channels: [web]
 
@@ -724,7 +724,7 @@ nodes:
         Generate a concise Zoho support ticket.
         Subject: "Certificate Issue — iGOT Support Needed"
         Description: summarise the issue type (sub_scenario if available), course details, and what was tried.
-      priority_override: P4
+      priority_override: P3
     on_complete: confirm_ticket
     on_restart: ask_certificate_issue
 

@@ -33,11 +33,10 @@ Return ONLY a valid JSON object with this exact schema (no preamble, no markdown
   "category": "<one of CERTIFICATE_ISSUES | PROFILE_ISSUES | COURSE_ACCESS | MASTER_DATA_REQUEST | TECHNICAL_SUPPORT | GENERAL_INQUIRY>",
   "sub_category": "<specific sub-issue, e.g. NOT_RECEIVED>",
   "classification": "<Query | Service Request | Incident>",
-  "severity": "<Sev 1 | Sev 2 | Sev 3 | Sev 4>",
   "portal": "<Learner Portal | MDO Portal>"
 }
 
-Do not set "priority" — it is fixed by the flow, not the model.
+Do not set "priority" or "severity" — they are fixed by the flow, not the model.
 """
 
 CHOICE_PROMPT = """\

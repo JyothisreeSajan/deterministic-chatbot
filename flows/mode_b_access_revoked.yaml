@@ -32,8 +32,8 @@ metadata:
   menu_order:       2
   classification:   Incident
   default_portal:   Learner Portal
-  default_priority: P2
-  default_severity: Sev 2
+  default_priority: P3
+  default_severity: Sev 3
 
 enabled_channels: [web]
 

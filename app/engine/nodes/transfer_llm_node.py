@@ -102,10 +102,14 @@ class TransferLLMNode(NodeHandler):
                     )
                     candidate = TicketDraft(**draft_dict)
                     if candidate.subject and candidate.description:
-                        # Carry over template-built fields the LLM doesn't return
+                        # Carry over template-built fields the LLM doesn't return.
+                        # priority/severity stay pinned to the template draft — the LLM
+                        # must not be able to raise/lower them with its own guess.
                         draft = candidate.model_copy(update={
                             "conversation_trail": draft.conversation_trail,
                             "key_facts_html": draft.key_facts_html,
+                            "priority": draft.priority,
+                            "severity": draft.severity,
                         })
                         llm_used = True
                 except Exception:  # noqa: BLE001

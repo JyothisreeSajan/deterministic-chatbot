@@ -1606,20 +1606,17 @@ nodes:
     type: message
     prompt:
       text: |
-        Since the MDO Admin for your organisation isn't currently available in the system, please contact the concerned **Young Professional (YP)** for further assistance:
+        Since the MDO Admin for your organisation isn't currently available in the system, please contact the concerned **KB point of contact** for further assistance:
 
-        - **YP Name:** {{ ctx.collected.yp_name }}
-        - **YP Email ID:** {{ ctx.collected.yp_email }}
-        {% if ctx.collected.yp_mobile %}
-        - **YP Mobile:** {{ ctx.collected.yp_mobile }}
-        {% endif %}
+        - **Name:** {{ ctx.collected.yp_name }}
+        - **Email ID:** {{ ctx.collected.yp_email }}
     next: satisfied
 
   - id: yp_not_found
     type: ticket_confirm
     prompt:
       text: |
-        We checked, and found that there is currently no MDO Admin or YP contact available for your organisation to assist with this request.
+        We checked, and found that there is currently no MDO Admin or KB point of contact available for your organisation to assist with this request.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -1629,7 +1626,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Profile Update — No Admin or YP Contact Found
+        **Issue Identified:** Profile Update — No Admin or KB point of contact Found
 
         **Summary of Request:**
         You reported a profile update issue, but there is currently no MDO Admin available to assist, and we could not locate a YP contact for your organisation either. You would like us to investigate this further.

@@ -257,11 +257,11 @@ nodes:
       text: |
         Your designation/group verification request has already been submitted. However, there is currently no MDO Admin available to approve the request.
 
-        Please connect with the concerned YP for further assistance.
+        Please connect with the concerned KB point of contact for further assistance.
 
-        - **YP Name:** {{ ctx.collected.yp_name }}
+        - **Name:** {{ ctx.collected.yp_name }}
 
-        - **YP Email ID:** {{ ctx.collected.yp_email }}
+        - **Email ID:** {{ ctx.collected.yp_email }}
     next: satisfied
 
   - id: yp_not_found

@@ -364,7 +364,7 @@ nodes:
       text: |
         We checked, and found that no APAR/CAP is currently assigned to your profile.
 
-        Please connect with the YP/AM below for further assistance:
+        Please connect with the KB point of contact below for further assistance:
 
         **Name:** {{ ctx.collected.yp_name | default('—') }}
         **Email ID:** {{ ctx.collected.yp_email | default('—') }}
@@ -376,7 +376,7 @@ nodes:
     type: message
     prompt:
       text: |
-        We checked, and couldn't find the YP/AM contact for your organization.
+        We checked, and couldn't find the KB point of contact for your organization.
 
         Please try again after some time.
     next: satisfied

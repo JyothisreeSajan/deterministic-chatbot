@@ -238,11 +238,10 @@ nodes:
       text: |
         The Email ID **{{ ctx.collected.new_identifier }}** cannot be updated because its domain is **not whitelisted** on the iGOT Karmayogi platform.
 
-        Please contact your assigned **Young Professional (YP)** for further assistance:
+        Please contact your assigned **KB point of contact** for further assistance:
 
         👤 **{{ ctx.collected.yp_name }}**
         📧 {{ ctx.collected.yp_email }}
-        📞 {{ ctx.collected.yp_mobile }}
     next: satisfied
 
   - id: yp_not_found
@@ -259,7 +258,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Domain Whitelisting — No YP Contact Found
+        **Issue Identified:** Domain Whitelisting — No KB point of contact Found
 
         **Summary of Request:**
         The Email ID {{ ctx.collected.new_identifier }} cannot be updated because its domain is not whitelisted, and we could not locate a YP contact for your organization to help resolve this. You would like us to investigate this further.
@@ -297,7 +296,7 @@ nodes:
       text: |
         The Email ID **{{ ctx.collected.new_identifier }}** cannot be updated because its domain is **not whitelisted** on the iGOT Karmayogi platform.
 
-        Please contact your **MDO Leader** or the **Young Professional (YP)** assigned to your organisation for further assistance.
+        Please contact your **MDO Leader** or the **KB point of contact** assigned to your organisation for further assistance.
     next: satisfied
 
   # ===========================================================================
@@ -539,14 +538,13 @@ nodes:
 
         👤 **{{ ctx.collected.yp_name }}**
         📧 {{ ctx.collected.yp_email }}
-        📞 {{ ctx.collected.yp_mobile }}
     next: satisfied
 
   - id: otp_no_mdo_fallback
     type: message
     prompt:
       text: |
-        If you're not receiving the OTP, please contact the **Young Professional (YP)** or **MDO Leader** assigned to your organisation for further assistance.
+        If you're not receiving the OTP, please contact the **KB point of contact** or **MDO Leader** assigned to your organisation for further assistance.
     next: satisfied
 
   # ===========================================================================

@@ -599,7 +599,7 @@ nodes:
   - id: mdo_api_error
     type: message
     prompt:
-      text: "We couldn't retrieve the MDO Admin details. Let me check for the YP/AM contact for your organization."
+      text: "We couldn't retrieve the MDO Admin details. Let me check for the KB point of contact for your organization."
     next: lookup_yp_contact
 
   - id: show_mdo_contact
@@ -648,7 +648,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        We couldn't retrieve the MDO Admin or YP/AM contact details for your organization at this time.
+        We couldn't retrieve the MDO Admin or KB point of contact details for your organization at this time.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -658,10 +658,10 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Training Plan / APAR Not Visible — No MDO Admin or YP Contact Found
+        **Issue Identified:** Training Plan / APAR Not Visible — No MDO Admin or KB point of contact Found
 
         **Summary of Request:**
-        Your training plan/APAR courses are not visible, and we could not locate an MDO Admin or YP/AM contact for your organization to help resolve this. You would like us to investigate this further.
+        Your training plan/APAR courses are not visible, and we could not locate an MDO Admin or KB point of contact for your organization to help resolve this. You would like us to investigate this further.
 
         - **Organization:** {{ ctx.collected.org_name or ctx.collected.org_channel | default('Not identified') }}
 

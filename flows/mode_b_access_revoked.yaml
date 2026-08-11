@@ -660,7 +660,7 @@ nodes:
       text: |
         ✅ **SPOC Details Found**
 
-        Please contact the YP/SPOC below for further assistance:
+        Please contact the KB point of contact below for further assistance:
 
         - **Name:** {{ ctx.collected.yp_name or "YP Contact" }}
         - **Email:** {{ ctx.collected.yp_email or "N/A" }}
@@ -675,7 +675,7 @@ nodes:
       text: |
         ✅ **SPOC Details Found**
 
-        Please contact the YP/SPOC below for further assistance:
+        Please contact the KB point of contact below for further assistance:
 
         - **Name:** {{ ctx.collected.yp_name or "YP Contact" }}
         - **Email:** {{ ctx.collected.yp_email or "N/A" }}

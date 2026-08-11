@@ -486,7 +486,7 @@ nodes:
       text: |
         We checked, and it looks like the course access criteria don't match your current profile.
 
-        Please reach out to your MDO/YP for further assistance with course eligibility and access.
+        Please reach out to your MDO/KB point of contact for further assistance with course eligibility and access.
 
         Here are their contact details:
 
@@ -513,7 +513,7 @@ nodes:
       text: |
         We checked, and it looks like the course access criteria don't match your current profile.
 
-        Please reach out to your YP/AM for further assistance with course eligibility and access.
+        Please reach out to your KB point of contact for further assistance with course eligibility and access.
 
         Here are their contact details:
 
@@ -537,7 +537,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Course Access — No MDO or YP Contact Found
+        **Issue Identified:** Course Access — No MDO or KB point of contact Found
 
         **Summary of Request:**
         The course access criteria don't match your current profile, and we could not locate an MDO or YP contact for your organization to help resolve this. You would like us to investigate this further.

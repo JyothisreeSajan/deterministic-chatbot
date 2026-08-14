@@ -662,7 +662,7 @@ nodes:
 
         Please contact the KB point of contact below for further assistance:
 
-        - **Name:** {{ ctx.collected.yp_name or "YP Contact" }}
+        - **Name:** {{ ctx.collected.yp_name or "KB point of contact" }}
         - **Email:** {{ ctx.collected.yp_email or "N/A" }}
     steps:
       - "Coordinate with the SPOC for the creation of an MDO Leader/Admin."
@@ -677,7 +677,7 @@ nodes:
 
         Please contact the KB point of contact below for further assistance:
 
-        - **Name:** {{ ctx.collected.yp_name or "YP Contact" }}
+        - **Name:** {{ ctx.collected.yp_name or "KB point of contact" }}
         - **Email:** {{ ctx.collected.yp_email or "N/A" }}
     steps:
       - "Connect with the shared SPOC using the details above."
@@ -694,10 +694,10 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Access Revoked — No MDO/SPOC Contact Found
+        **Issue Identified:** Access Revoked — No MDO/KB point of Contact Found
 
         **Summary of Request:**
-        You reported that your access was revoked and you need help raising a transfer request, but no MDO Admin or YP/SPOC contact could be located for your organization. You would like us to investigate this further.
+        You reported that your access was revoked and you need help raising a transfer request, but no MDO Admin or KB point of contact could be located for your organization. You would like us to investigate this further.
 
         - **Organization/Ministry/State:** {{ ctx.collected.dropdown_org_name or ctx.collected.transfer_org_name or ctx.collected.selected_parent_name or ctx.collected.fetched_org_name or 'Not identified' }}
 
@@ -715,11 +715,11 @@ nodes:
     llm_directives:
       objective: |
         The user's platform access was revoked (flagged "Not My User") and no MDO Admin
-        or YP/SPOC contact could be located for their organization/ministry/state, so the
+        or KB point of contact could be located for their organization/ministry/state, so the
         user has no self-service path to restore access.
         Generate a Zoho support ticket so the support team can manually identify the
         correct contact and help restore the user's access.
-        Subject: "Access Revoked — No MDO/SPOC Contact Found"
+        Subject: "Access Revoked — No MDO/KB point of Contact Found"
         Description: include any organization/ministry/state/department names collected
         so far (transfer_org_name, dropdown_org_name, selected_parent_name,
         dropdown_dept_name, fetched_org_name) and the user's channel/root org info.

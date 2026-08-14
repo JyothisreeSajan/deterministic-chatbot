@@ -319,7 +319,7 @@ On API error, the flow goes straight to the LLM fallback (`transfer_to_llm`), no
 
 **Nodes:** `fetch_root_org_for_retirement` (`GET /api/user/private/v1/read/{user_id}` → `rootOrgId`, `channel`, `primaryEmail`, `mobile`) then `lookup_mdo_for_retirement` (`POST /api/private/user/v1/search`, same MDO_ADMIN filter shape as UC-14 Step 2).
 
-Only executed when `has_ehrms_id = false`. Falls back to YP contact lookup if no MDO_ADMIN is found or either call errors.
+Only executed when `has_ehrms_id = false`. Falls back to KB point of contact lookup if no MDO_ADMIN is found or either call errors.
 
 ---
 
@@ -431,7 +431,7 @@ curl -X GET \
 
 ### Step 2 (Conditional) — MDO Contact Details
 
-**Node:** `lookup_mdo_for_svc_history` — `POST /api/private/user/v1/search`, same MDO_ADMIN filter shape as UC-14 Step 2, reusing `rootOrgId` already captured in Step 1. Only executed when the user says organisation/designation is incorrect. Falls back to YP contact if no MDO_ADMIN is found or the call errors.
+**Node:** `lookup_mdo_for_svc_history` — `POST /api/private/user/v1/search`, same MDO_ADMIN filter shape as UC-14 Step 2, reusing `rootOrgId` already captured in Step 1. Only executed when the user says organisation/designation is incorrect. Falls back to KB point of contact if no MDO_ADMIN is found or the call errors.
 
 ---
 
@@ -586,7 +586,7 @@ Response fields used: `response.content[0].profileDetails.personalDetails.firstn
 
 The shared fragment `flows/_shared/_mdo_admin_lookup.yaml` implements the same endpoint/body shape and additionally maps `response.count` → `collected.mdo_admin_count`, but that fragment is not imported by this flow.
 
-**Fallback:** If no MDO_ADMIN found (or the call errors), YP contact is looked up via `flows/_shared/_yp_lookup.yaml` from the in-memory index built off `data/Allocation_28.10.2025.xlsx`, keyed on the org/department name (`collected.org_channel`) — not state + department.
+**Fallback:** If no MDO_ADMIN found (or the call errors), KB point of contact is looked up via `flows/_shared/_yp_lookup.yaml` from the in-memory index built off `data/Allocation_28.10.2025.xlsx`, keyed on the org/department name (`collected.org_channel`) — not state + department.
 
 ### ZohoDesk Ticket Creation
 

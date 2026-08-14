@@ -38,7 +38,7 @@ PATH B — Course / Program
                ↓
            MDO found             → show MDO contact, close
            MDO not found / error → data_lookup: yp_lookup (local Excel)
-                                   YP found  → show YP contact, close
+                                   YP found  → show KB point of contact, close
                                    YP not found → ask user to connect with MDO or YP, close
 
   MODERATED COURSE PATH (secureSettings detected in Step 2)

@@ -671,7 +671,7 @@ nodes:
         **Issue Identified:** CAP Not Visible — No MDO Admin or KB point of contact Found
 
         **Summary of Request:**
-        Your Comprehensive Assessment Program (CAP) is not visible, and we could not locate an MDO Admin or YP/AM contact for your organization to help resolve this. You would like us to investigate this further.
+        Your Comprehensive Assessment Program (CAP) is not visible, and we could not locate an MDO Admin or KB point of contact for your organization to help resolve this. You would like us to investigate this further.
 
         - **Organization:** {{ ctx.collected.org_name or ctx.collected.org_channel | default('Not identified') }}
 
@@ -689,13 +689,13 @@ nodes:
     llm_directives:
       objective: |
         The user's Comprehensive Assessment Program (CAP) is not visible, and no MDO Admin
-        or YP/AM contact could be located for their organization either — so the user has
+        or KB point of contact could be located for their organization either — so the user has
         no self-service path to get this resolved.
         Generate a Zoho support ticket so the support team can manually identify the
         correct contact and resolve the visibility issue.
-        Subject: "CAP Not Visible — No Admin or YP Contact Found"
+        Subject: "CAP Not Visible — No Admin or KB point of contact Found"
         Description: include the organization/channel and note that neither an MDO Admin
-        nor a YP/AM contact could be found.
+        nor a KB point of contact could be found.
       priority_override: P3
     on_complete: confirm_ticket
 

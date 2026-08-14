@@ -22,7 +22,7 @@
 #
 #   YP FALLBACK (Global Rule — no admin available)
 #             → data_lookup via yp_lookup service (Excel)
-#             → YP found    → show yp contact
+#             → YP found    → show KB point of contact
 #             → YP not found → generic message
 #
 # SOP sub-scenarios §1.1–§1.4 are handled by asking the user after submission
@@ -268,7 +268,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        We checked, and found that your designation/group verification request has already been submitted, but there is currently no MDO Admin or YP contact available for your organization to assist with approval.
+        We checked, and found that your designation/group verification request has already been submitted, but there is currently no MDO Admin or KB point of contact available for your organization to assist with approval.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -278,10 +278,10 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Designation / Group Verification — No Admin or YP Contact Found
+        **Issue Identified:** Designation / Group Verification — No Admin or KB point of contact Found
 
         **Summary of Request:**
-        Your designation/group verification request has already been submitted, but there is currently no MDO Admin available to approve it, and we could not locate a YP contact for your organization either. You would like us to investigate this further.
+        Your designation/group verification request has already been submitted, but there is currently no MDO Admin available to approve it, and we could not locate a KB point of contact for your organization either. You would like us to investigate this further.
 
         - **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 
@@ -299,13 +299,13 @@ nodes:
     llm_directives:
       objective: |
         The user's designation/group verification request is pending, but no Organization
-        Admin could be found to approve it, and no YP/SPOC contact could be located for
+        Admin could be found to approve it, and no KB point of contact could be located for
         their organization either — so the user has no self-service path to get it approved.
         Generate a Zoho support ticket so the support team can manually identify the
         correct approver and resolve the pending request.
-        Subject: "Designation/Group Verification — No Admin or YP Contact Found"
+        Subject: "Designation/Group Verification — No Admin or KB point of contact Found"
         Description: include the organization/channel and note that the request is pending
-        with no available approver or YP contact.
+        with no available approver or KB point of contact.
       priority_override: P3
     on_complete: confirm_ticket
 

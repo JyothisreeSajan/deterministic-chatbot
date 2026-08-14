@@ -8,9 +8,9 @@
 #   PATH A — Marketplace / external course (Coursera, Harvard, etc.)
 #             Pure guidance — no active enrollment cycle. No API needed.
 #   PATH B — Regular iGOT course or program
-#             User profile → Composite Search → Access Settings → MDO/YP contact
+#             User profile → Composite Search → Access Settings → MDO/KB point of contact
 #   PATH C — Event on iGOT
-#             Composite Search → Access Settings → MDO/YP contact
+#             Composite Search → Access Settings → MDO/KB point of contact
 #
 # APIs used:
 #   GET  /api/user/private/v1/read/{user_id}  (karmayogi — user profile)
@@ -527,7 +527,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        We checked, and it looks like the course access criteria don't match your current profile, but we couldn't retrieve an MDO or YP contact for your organization at this time.
+        We checked, and it looks like the course access criteria don't match your current profile, but we couldn't retrieve an MDO or KB point of contact for your organization at this time.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -540,7 +540,7 @@ nodes:
         **Issue Identified:** Course Access — No MDO or KB point of contact Found
 
         **Summary of Request:**
-        The course access criteria don't match your current profile, and we could not locate an MDO or YP contact for your organization to help resolve this. You would like us to investigate this further.
+        The course access criteria don't match your current profile, and we could not locate an MDO or KB point of contact for your organization to help resolve this. You would like us to investigate this further.
 
         - **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 
@@ -558,13 +558,13 @@ nodes:
     llm_directives:
       objective: |
         The user's course access criteria don't match their current profile, and no MDO or
-        YP contact could be located for their organization either — so the user has no
+        KB point of contact could be located for their organization either — so the user has no
         self-service path to resolve this.
         Generate a Zoho support ticket so the support team can manually identify the
         correct contact and resolve the eligibility/access issue.
-        Subject: "Course Access — No MDO or YP Contact Found"
+        Subject: "Course Access — No MDO or KB point of contact Found"
         Description: include the organization/channel and note that neither an MDO nor a
-        YP contact could be found.
+        KB point of contact could be found.
       priority_override: P3
     on_complete: confirm_ticket
 

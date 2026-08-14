@@ -20,7 +20,7 @@
 #   STEP 3  → POST /api/private/user/v1/search  (check if identifier already registered)
 #               NOT registered  → guide user through self-service OTP path
 #                   │              (View Profile → Other Details → Edit → OTP)
-#                   └── OTP not received → fetch MDO / YP contact → close
+#                   └── OTP not received → fetch MDO / KB point of contact → close
 #               ALREADY registered → fetch conflict account details → decision tree
 #
 #   STEP 4  → [Conflict path] POST /api/course/private/v4/user/enrollment/list/{conflict_user_id}

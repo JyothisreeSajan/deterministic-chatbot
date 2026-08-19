@@ -63,7 +63,7 @@ version: 1
 
 metadata:
   category:         platform
-  menu_label:       "⭐ Karma points issue"
+  menu_label:       "⭐ Karma Points Issue"
   menu_group:       "Recognition & Engagement"
   menu_group_order: 4
   menu_order:       10
@@ -98,8 +98,8 @@ imports:
   - _terminal
   - fragment: _zoho_ticket
     with:
-      cf_category:     platform
-      cf_sub_category: karma_points
+      cf_category:     "Recognition & Engagement"
+      cf_sub_category: "Karma Points"
       cf_flow_id:      KARMA_POINTS_ISSUE
 
 nodes:

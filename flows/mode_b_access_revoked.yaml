@@ -26,7 +26,7 @@ version: 2
 
 metadata:
   category:         profile
-  menu_label:       "🔒 Access revoked"
+  menu_label:       "🔒 Access Revoked"
   menu_group:       "Profile & User Management"
   menu_group_order: 1
   menu_order:       2
@@ -52,8 +52,8 @@ imports:
   - fragment: _yp_lookup
   - fragment: _zoho_ticket
     with:
-      cf_category:     profile
-      cf_sub_category: access_revoked
+      cf_category:     "Profile & User Management"
+      cf_sub_category: "Access Revoked"
       cf_flow_id:      ACCESS_REVOKED
 
 nodes:

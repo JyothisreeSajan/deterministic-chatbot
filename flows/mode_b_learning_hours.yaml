@@ -40,7 +40,7 @@ metadata:
   classification:   Service Request
   default_priority: P3
   default_severity: Sev 3
-  menu_label:       "🔄 Learning Hours not Reflecting"
+  menu_label:       "🔄 Learning Hours Issue"
   menu_group:       "Recognition & Engagement"
   menu_group_order: 4
   menu_order:       12
@@ -71,8 +71,8 @@ imports:
   - fragment: _yp_lookup
   - fragment: _zoho_ticket
     with:
-      cf_category:     platform
-      cf_sub_category: learning_hours
+      cf_category:     "Recognition & Engagement"
+      cf_sub_category: "Learning Hours"
       cf_flow_id:      LEARNING_HOURS
 
 nodes:

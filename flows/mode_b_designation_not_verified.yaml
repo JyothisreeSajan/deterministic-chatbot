@@ -39,7 +39,7 @@ version: 2
 
 metadata:
   category:         profile
-  menu_label:       "✅ Designation / Group not verified"
+  menu_label:       "✅ Designation / Group Not verified"
   menu_group:       "Profile & User Management"
   menu_group_order: 1
   menu_order:       6
@@ -69,8 +69,8 @@ imports:
   - _terminal
   - fragment: _zoho_ticket
     with:
-      cf_category:     profile
-      cf_sub_category: designation_group_not_verified
+      cf_category:     "Profile & User Management"
+      cf_sub_category: "Designation / Group Not verified"
       cf_flow_id:      DESIGNATION_GROUP_NOT_VERIFIED
 
 nodes:

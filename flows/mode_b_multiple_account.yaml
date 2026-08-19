@@ -84,8 +84,8 @@ imports:
   - _multiple_account
   - fragment: _zoho_ticket
     with:
-      cf_category: account
-      cf_sub_category: multiple_account_email_mobile_conflict
+      cf_category: "Profile & User Management"
+      cf_sub_category: "Email / Mobile already registered"
       cf_flow_id: MULTIPLE_ACCOUNT
 
 nodes: []

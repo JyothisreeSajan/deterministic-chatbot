@@ -19,7 +19,7 @@ version: 2
 
 metadata:
   category:         profile
-  menu_label:       "👤 Profile update"
+  menu_label:       "👤 Profile Update"
   menu_group:       "Profile & User Management"
   menu_group_order: 1
   menu_order:       5
@@ -62,8 +62,8 @@ imports:
   - _multiple_account
   - fragment: _zoho_ticket
     with:
-      cf_category: profile
-      cf_sub_category: profile_update
+      cf_category: "Profile & User Management"
+      cf_sub_category: "Profile Update"
       cf_flow_id: PROFILE_COMPLETION
 
 nodes:

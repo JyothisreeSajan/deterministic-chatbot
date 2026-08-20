@@ -932,13 +932,11 @@ nodes:
     follow_up:
       text: "Were you able to complete the assessment?"
       quick_replies:
-        - { id: YES,     label: "✅ Yes, completed successfully" }
-        - { id: NO,      label: "❌ No, facing an issue" }
-        - { id: PENDING, label: "🕐 I'll try and come back" }
+        - { id: YES, label: "✅ Yes, completed successfully" }
+        - { id: NO,  label: "❌ Still facing an issue" }
     on_reply:
-      YES:     progress_updated_end
-      NO:      assessment_issue_check
-      PENDING: progress_pending_end
+      YES: progress_updated_end
+      NO:  assessment_issue_check
 
   # Ask what kind of issue the user faces with the assessment (Section 11.3)
   - id: assessment_issue_check
@@ -948,7 +946,7 @@ nodes:
     quick_replies:
       - { id: mobile,         label: "Unable to complete the assessment from Mobile." }
       - { id: limit_exceeded, label: "Assessment Limit Exceeded." }
-      - { id: other_error,    label: "Any Other Error." }
+      - { id: other_error,    label: "Any Other Issue." }
     disable_input: true
     on_reply:
       mobile:         assessment_mobile_guidance
@@ -1270,16 +1268,6 @@ nodes:
         
     next: satisfied
 
-  - id: progress_pending_end
-    type: message
-    prompt:
-      text: |
-        Understood. Please complete the pending resource(s) at your convenience.
-
-        **Important:** Please complete all pending resources to achieve **100% completion**. Once all mandatory resources are completed successfully, the certificate will be generated automatically.
-
-        If the issue persists, please start a new session and choose **Course / Program / Event progress issue**.
-    next: satisfied
   - id: no_courses_found
     type: message
     prompt:

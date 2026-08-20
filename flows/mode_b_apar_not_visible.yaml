@@ -28,7 +28,7 @@ version: 1
 
 metadata:
   category:         course
-  menu_label:       "📋 Training plan / APAR not visible"
+  menu_label:       "📋 APAR / Training Plan Issue"
   menu_group:       "CA/APAR Issue"
   menu_group_order: 3
   menu_order:       6
@@ -49,7 +49,7 @@ classification:
     - "training plan missing"
     - "APAR tab empty"
 
-entry_node: fetch_user_profile
+entry_node: ask_apar_issue_type
 
 imports:
   - _terminal
@@ -62,6 +62,26 @@ imports:
       cf_flow_id:      APAR_NOT_VISIBLE
 
 nodes:
+
+  # ===========================================================================
+  # Step 0 — Which APAR/Training Plan issue (mirrors mode_b_cap_not_visible.yaml's
+  # ask_cap_issue_type: save the raw choice, then run the same CBP-plan-exists
+  # check for all three; branch_on_apar_menu_choice reads apar_menu_choice once
+  # the plan is confirmed to exist to decide where to land)
+  # ===========================================================================
+  - id: ask_apar_issue_type
+    type: message
+    prompt:
+      text: |
+        Please select the issue you are facing with your APAR / Training Plan:
+    quick_replies:
+      - { id: not_visible,        label: "📋 APAR / Training Plan Not Visible" }
+      - { id: unexpected_courses, label: "❓ APAR / Training Plan Unexpected courses visible" }
+      - { id: incorrect_plan,     label: "❓ APAR / Training Plan - Incorrect Plan Assigned" }
+    disable_input: true
+    on_reply:
+      save_to: collected.apar_menu_choice
+      next: fetch_user_profile
 
   # ===========================================================================
   # Step 1 — Fetch user ID via User Search API
@@ -165,10 +185,20 @@ nodes:
       - { from: "$.courses", to: collected.all_enrollment_list }
       - { from: "$.courses", to: collected.apar_picker_list, transform: nested_apar_courses, transform_ctx_key: collected.all_courses }
       - { from: "$.courses", to: collected.non_apar_picker_list, transform: nested_non_apar_courses, transform_ctx_key: collected.all_courses }
-    on_success: show_plan_summary
+    on_success: branch_on_apar_menu_choice
     on_error:
-      any: show_plan_summary
+      any: branch_on_apar_menu_choice
 
+  # ===========================================================================
+  # Route to the issue picked at ask_apar_issue_type — unset/"not_visible"
+  # keeps the original behavior of show_plan_summary unchanged.
+  # ===========================================================================
+  - id: branch_on_apar_menu_choice
+    type: branch
+    rules:
+      - { if: "ctx.collected.apar_menu_choice == 'unexpected_courses'", then: ec1_ask_course_name }
+      - { if: "ctx.collected.apar_menu_choice == 'incorrect_plan'",     then: ec2_fetch_profile }
+    default: show_plan_summary
 
   # ===========================================================================
   # Step 4 — Show plan summary + navigation steps  (SOP Step 2.2)
@@ -191,14 +221,29 @@ nodes:
     quick_replies:
       - { id: apar,     label: "🟢 View APAR Courses" }
       - { id: non_apar, label: "📘 View Non-APAR Courses" }
-      - { id: ec1,      label: "❓ A specific course is missing" }
-      - { id: ec2,      label: "❓ Wrong CBP/Course" }
     disable_input: true
     on_reply:
-      apar:     show_apar_courses
-      non_apar: show_non_apar_courses
-      ec1:      ec1_ask_course_name
-      ec2:      ec2_fetch_profile
+      apar:     check_apar_courses_available
+      non_apar: check_non_apar_courses_available
+
+  # ===========================================================================
+  # Pre-check before ever entering the picker — a `branch` node never pauses
+  # for user input (unlike `collect`), so an empty list reaches the silent end
+  # in the SAME turn: no input box is ever shown for the user to type into.
+  # apar_picker_list/non_apar_picker_list were already fetched by
+  # fetch_all_enrollments, so this is a plain in-memory check, no API call.
+  # ===========================================================================
+  - id: check_apar_courses_available
+    type: branch
+    rules:
+      - { if: "len(ctx.collected.apar_picker_list or []) > 0", then: show_apar_courses }
+    default: no_apar_courses_found
+
+  - id: check_non_apar_courses_available
+    type: branch
+    rules:
+      - { if: "len(ctx.collected.non_apar_picker_list or []) > 0", then: show_non_apar_courses }
+    default: no_non_apar_courses_found
 
   # ===========================================================================
   # Step 5 — Confirm course type  (SOP Step 2.3.1)
@@ -227,9 +272,11 @@ nodes:
     type: collect
     prompt:
       text: |
+        {% if ctx.collected.apar_picker_list %}
         🟢 **APAR Training Plan Courses**
-        
+
         Tap an item below to continue.
+        {% endif %}
       title: "Select Course"
       placeholder: "Search your enrolled courses..."
     field:
@@ -239,13 +286,30 @@ nodes:
     dynamic_options:
       source: context
       context_key: collected.apar_picker_list
-      empty_message: "No APAR courses were found in your training plan."
-      on_empty: no_apar_courses_found
       response_mapping:
         id_field: courseId
         label_field: courseName
         sub_label_field: combinedMeta
-    next: share_apar_course_link
+    next: validate_apar_course_pick
+
+  # Free text typed into the picker's search box gets stored as the field
+  # value verbatim (engine-level behavior, not specific to this flow) — this
+  # guards against that being treated as a real selection. apar_picker_list is
+  # nested (each entry is a "Plan N" group; the real, selectable courses are
+  # in that entry's `children`), so the match has to look inside children,
+  # not at the group's own placeholder courseId.
+  - id: validate_apar_course_pick
+    type: branch
+    rules:
+      - if: >
+          len([
+            1
+            for plan in (ctx.collected.apar_picker_list or [])
+            for item in (plan.get('children') or [])
+            if item.get('courseId') == ctx.collected.selected_apar_course_id
+          ]) > 0
+        then: share_apar_course_link
+    default: no_apar_courses_found
 
   - id: share_apar_course_link
     type: message
@@ -265,9 +329,11 @@ nodes:
     type: collect
     prompt:
       text: |
+        {% if ctx.collected.non_apar_picker_list %}
         📘 **Non-APAR Training Plan Courses**
-        
+
         Tap an item below to continue.
+        {% endif %}
       title: "Select Course"
       placeholder: "Search your enrolled courses..."
     field:
@@ -277,13 +343,26 @@ nodes:
     dynamic_options:
       source: context
       context_key: collected.non_apar_picker_list
-      empty_message: "No Non-APAR courses were found in your training plan."
-      on_empty: no_non_apar_courses_found
       response_mapping:
         id_field: courseId
         label_field: courseName
         sub_label_field: combinedMeta
-    next: share_non_apar_course_link
+    next: validate_non_apar_course_pick
+
+  # Same guard as validate_apar_course_pick — see comment there (nested
+  # Plan/children structure, must match inside children).
+  - id: validate_non_apar_course_pick
+    type: branch
+    rules:
+      - if: >
+          len([
+            1
+            for plan in (ctx.collected.non_apar_picker_list or [])
+            for item in (plan.get('children') or [])
+            if item.get('courseId') == ctx.collected.selected_non_apar_course_id
+          ]) > 0
+        then: share_non_apar_course_link
+    default: no_non_apar_courses_found
 
   - id: share_non_apar_course_link
     type: message
@@ -841,25 +920,22 @@ nodes:
     next: satisfied
 
   # ---------------------------------------------------------------------------
-  # Empty-state nodes
+  # Empty-state nodes — reached directly from check_apar_courses_available /
+  # check_non_apar_courses_available before the picker ever runs, so this text
+  # is the only place the user sees the "not found" notice; ends silently
+  # with no further text or input afterward.
   # ---------------------------------------------------------------------------
   - id: no_apar_courses_found
-    type: message
+    type: end
+    outcome: self_served
     prompt:
-      text: |
-        We didn't find any APAR courses in your assigned training plan at this time.
-
-        If you believe this is incorrect, please try again after some time or contact your MDO administrator.
-    next: satisfied
+      text: "No APAR courses were found in your training plan."
 
   - id: no_non_apar_courses_found
-    type: message
+    type: end
+    outcome: self_served
     prompt:
-      text: |
-        We didn't find any Non-APAR courses in your assigned training plan at this time.
-
-        If you believe this is incorrect, please try again after some time or contact your MDO administrator.
-    next: satisfied
+      text: "No Non-APAR courses were found in your training plan."
 
   # EC1 Step 3.3 — Course exists in plan but not completed (SOP 3.3)
   - id: ec1_course_not_completed

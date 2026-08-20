@@ -41,10 +41,10 @@ version: 1
 
 metadata:
   category:         course
-  menu_label:       "🔍 Can't find a course or event"
+  menu_label:       "🔖 Enrollment Issues"
   menu_group:       "Content Related Issue"
   menu_group_order: 2
-  menu_order:       5
+  menu_order:       6
   classification:   Service Request
   default_priority: P3
   default_severity: Sev 3
@@ -69,7 +69,7 @@ classification:
     - "course search"
     - "find a course"
 
-entry_node: ask_marketplace_question
+entry_node: ask_enrollment_issue_type
 
 imports:
   - _terminal
@@ -83,6 +83,47 @@ imports:
       cf_flow_id:      FIND_COURSE
 
 nodes:
+
+  # ===========================================================================
+  # Step 0 — Which enrollment issue (merges the former standalone
+  # mode_b_unenroll_request.yaml flow in as a second option here, so
+  # "Enrollment Issues" is one item inside "Content Related Issue" instead of
+  # two separate rows)
+  # ===========================================================================
+  - id: ask_enrollment_issue_type
+    type: message
+    prompt:
+      text: |
+        Please select the issue you are facing:
+    quick_replies:
+      - { id: find_enroll, label: "🔍 Unable to enroll or find a igot course / igot marketplace course / event" }
+      - { id: unenroll,    label: "🚫 How to unenroll from the course" }
+    disable_input: true
+    on_reply:
+      find_enroll: ask_marketplace_question
+      unenroll:    inform_unavailable
+
+  # ===========================================================================
+  # Unenroll request guidance (moved from mode_b_unenroll_request.yaml,
+  # UNENROLL_REQUEST flow_id) — pure informational guidance, no API calls,
+  # no ticket, per that flow's SOP.
+  # ===========================================================================
+  - id: inform_unavailable
+    type: message
+    prompt:
+      text: |
+        Currently, there is **no functionality available on our platform to unenroll** from an enrolled course, program, or event.
+
+        You may **continue and complete** the enrolled content.
+        Alternatively, you may **ignore the enrolled content** — it will remain in your profile but will not affect your other courses or progress.
+
+        We hope this information helps.
+    disable_input: true
+    next: unenroll_end
+
+  - id: unenroll_end
+    type: end
+    outcome: self_served
 
   # ===========================================================================
   # STEP 1 — Identify whether the user is looking for a marketplace/external course

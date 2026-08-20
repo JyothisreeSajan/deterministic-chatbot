@@ -32,7 +32,7 @@ version: 3
 
 metadata:
   category:         course
-  menu_label:       "📊 Course progress issue"
+  menu_label:       "📊 Course / Program Progress Issue"
   menu_group:       "Content Related Issue"
   menu_group_order: 2
   menu_order:       3

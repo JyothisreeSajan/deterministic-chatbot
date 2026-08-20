@@ -39,7 +39,7 @@ version: 2
 
 metadata:
   category:         profile
-  menu_label:       "🎖️ The Verified Karmayogi Badge is not visible."
+  menu_label:       "🎖️ Profile Verification / Verified Badge"
   menu_group:       "Profile & User Management"
   menu_group_order: 1
   menu_order:       6
@@ -69,8 +69,8 @@ imports:
   - _terminal
   - fragment: _zoho_ticket
     with:
-      cf_category:     profile
-      cf_sub_category: karmayogi_badge_check
+      cf_category:     "Profile & User Management"
+      cf_sub_category: "Profile Verification / Verified Badge"
       cf_flow_id:      KARMAYOGI_BADGE_CHECK
 
 nodes:

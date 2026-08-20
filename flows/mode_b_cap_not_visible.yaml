@@ -29,7 +29,7 @@ version: 1
 
 metadata:
   category:         course
-  menu_label:       "📋 CAP not visible"
+  menu_label:       "📋 Comprehensive Assessment (CAP) Issue"
   menu_group:       "CA/APAR Issue"
   menu_group_order: 3
   menu_order:       7
@@ -79,10 +79,10 @@ nodes:
       text: |
         Please select the issue you are facing with the Comprehensive Assessment Program (CAP):
     quick_replies:
-      - { id: cap_not_visible, label: "👁️ CAP is not visible on dashboard" }
-      - { id: cap_enrollment_issue, label: "📝 Unable to enroll / Incorrect CAP" }
-      - { id: cap_assessment_locked, label: "🔒 Final Assessment locked in CAP" }
-      - { id: cap_assessment_limit, label: "🚫 Assessment Limit Exceeded" }
+      - { id: cap_not_visible, label: "👁️ Comprehensive Assessment Not Visible" }
+      - { id: cap_enrollment_issue, label: "📝 Comprehensive Assessment Unable to enroll" }
+      - { id: cap_assessment_locked, label: "🔒 Comprehensive Assessment locked" }
+      - { id: cap_assessment_limit, label: "🚫 Comprehensive Assessment limit exceeded" }
     disable_input: true
     on_reply:
       save_to: collected.cap_issue_type

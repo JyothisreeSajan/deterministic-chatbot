@@ -17,7 +17,7 @@ version: 1
 
 metadata:
   category:         platform
-  menu_label:       "🏆 Leader Board Issue
+  menu_label:       "🏆 Leader Board Issue"
   menu_group:       "Recognition & Engagement"
   menu_group_order: 4
   menu_order:       8

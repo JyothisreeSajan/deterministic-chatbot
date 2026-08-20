@@ -74,22 +74,20 @@ nodes:
     prompt:
       text: "I can help with your iGOT profile. What do you need help with?"
     quick_replies:
-      - { id: name,          label: "✏️ Name update" }
-      - { id: display_name,  label: "🏷️ Display name / username" }
-      - { id: designation,   label: "💼 Designation not found" }
-      - { id: email_mobile,  label: "📧 Email or mobile update" }
-      - { id: mother_tongue, label: "🗣️ Mother tongue not in list" }
-      - { id: ehrms,         label: "🪪 EHRMS ID" }
-      - { id: retirement,    label: "📅 Date of retirement blank" }
-      - { id: service,       label: "🏛️ Service not found" }
-      - { id: svc_history,   label: "📋 Service history" }
-      - { id: edu_qual,      label: "🎓 Educational qualification" }
-      - { id: photo,         label: "📷 Profile photo" }
-      - { id: cover,         label: "🖼️ Cover photo" }
-      - { id: pct,           label: "📊 Profile completion %" }
+      - { id: name,          label: "Request to change Name" }
+      - { id: designation,   label: "Request to update designation" }
+      - { id: email_mobile,  label: "Request to update email address / mobile number" }
+      - { id: mother_tongue, label: "Request to add mother tongue" }
+      - { id: ehrms,         label: "Request to update eHRMS details" }
+      - { id: retirement,    label: "Request to add date of retirement" }
+      - { id: service,       label: "Request to add/edit service details" }
+      - { id: svc_history,   label: "Request to add/edit service history" }
+      - { id: edu_qual,      label: "Request to add/edit educational qualification" }
+      - { id: photo,         label: "Request to add/edit profile photo" }
+      - { id: cover,         label: "Request to add/edit cover photo" }
+      - { id: pct,           label: "Request to check profile completion %" }
     on_reply:
       name:          fetch_name_for_guide
-      display_name:  display_name_info
       designation:   designation_fetch_list
       email_mobile:  email_mobile_steps
       mother_tongue: mother_tongue_fetch_languages
@@ -136,18 +134,6 @@ nodes:
       - "Click on **Save / Submit** to update the details."
     next: satisfied
 
-
-  # ═══════════════════════════════════════════════════════════════════════════
-  # §2  DISPLAY NAME
-  # ═══════════════════════════════════════════════════════════════════════════
-  - id: display_name_info
-    type: message
-    prompt:
-      text: |
-        The **Display Name / Username** shown next to your profile name is **system-generated** and **cannot be manually updated** at this time.
-
-        We appreciate your understanding. Please let us know if you have any other profile concern.
-    next: satisfied
 
   # ═══════════════════════════════════════════════════════════════════════════
   # §3  DESIGNATION NOT FOUND

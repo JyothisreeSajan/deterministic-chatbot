@@ -61,9 +61,9 @@ nodes:
     prompt:
       text: "Please select the type of issue you are facing with your Event:"
     quick_replies:
-      - { id: UC1_VIDEO_MISSING,         label: "Video Missing" }
-      - { id: UC2_VIDEO_NOT_PLAYING,     label: "Video Not Playing" }
-      - { id: UC3_PROGRESS_NOT_UPDATING, label: "Progress Not Updating" }
+      - { id: UC3_PROGRESS_NOT_UPDATING, label: "Event Progress not updating" }
+      - { id: UC1_VIDEO_MISSING,         label: "Event Video Missing" }
+      - { id: UC2_VIDEO_NOT_PLAYING,     label: "Event Video Not Playing" }
     disable_input: true
     on_reply:
       UC1_VIDEO_MISSING:         pick_event_from_list_uc1

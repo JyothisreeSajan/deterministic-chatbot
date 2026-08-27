@@ -242,7 +242,8 @@ nodes:
         4. Search and select **{{ ctx.collected.c1_course_name }}**.
         5. Open the course details page.
         6. Navigate to the **About** section.
-        7. Click on **Download Certificate**.
+        7. Please complete the survey to access the certificate (ignore if already done).
+        8. Click on **Download Certificate**.
     next: satisfied
 
   - id: c1_certificate_available_within_24h
@@ -259,7 +260,8 @@ nodes:
         4. Search and select **{{ ctx.collected.c1_course_name }}**.
         5. Open the course details page.
         6. Navigate to the **About** section.
-        7. Click on **Download Certificate**.
+        7. Please complete the survey to access the certificate (ignore if already done).
+        8. Click on **Download Certificate**.
     next: satisfied
 
   - id: c1_certificate_available_program
@@ -276,7 +278,8 @@ nodes:
         4. Search and select **{{ ctx.collected.c1_course_name }}**.
         5. Open the program details page.
         6. Navigate to the **About** section.
-        7. Click on **Download Certificate**.
+        7. Please complete the survey to access the certificate (ignore if already done).
+        8. Click on **Download Certificate**.
     next: satisfied
 
   - id: c1_certificate_available_program_within_24h
@@ -293,7 +296,8 @@ nodes:
         4. Search and select **{{ ctx.collected.c1_course_name }}**.
         5. Open the program details page.
         6. Navigate to the **About** section.
-        7. Click on **Download Certificate**.
+        7. Please complete the survey to access the certificate (ignore if already done).
+        8. Click on **Download Certificate**.
     next: satisfied
 
   - id: c1_wait_24h

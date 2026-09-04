@@ -9,6 +9,17 @@ YAML shape:
         - "Check back in 24 hours."
         - "Ensure all course modules are marked complete."
         - "If 24 hours have passed, raise a ticket and we'll investigate."
+
+    A step prefixed with "### " is rendered as a bold, un-numbered group
+    header instead, and restarts numbering at 1 for the steps under it —
+    use this to split "steps" into labeled sub-lists (e.g. Mobile vs.
+    Desktop instructions) without double-numbering:
+      steps:
+        - "### If Using Mobile Device"
+        - "Log in to the iGOT Karmayogi portal."
+        - "Enable Desktop Mode/Desktop Site in your mobile browser."
+        - "### If Using Laptop/Desktop"
+        - "Open the portal in an Incognito/Private Window."
       follow_up:
         text: "How long has it been since you completed the course?"
         quick_replies:
@@ -63,8 +74,15 @@ class ResolutionNode(NodeHandler):
             if intro:
                 body_lines.append(intro)
             body_lines.append("")
-            for i, step in enumerate(steps, start=1):
-                body_lines.append(f"{i}. {render(step, ctx)}")
+            step_num = 1
+            for step in steps:
+                rendered = render(step, ctx)
+                if rendered.startswith("### "):
+                    body_lines.append(f"**{rendered[4:].strip()}**")
+                    step_num = 1
+                else:
+                    body_lines.append(f"{step_num}. {rendered}")
+                    step_num += 1
 
             activities.append(Activity.markdown("\n".join(body_lines)).model_dump(exclude_none=True))
 

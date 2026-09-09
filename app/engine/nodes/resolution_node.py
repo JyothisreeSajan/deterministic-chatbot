@@ -78,7 +78,9 @@ class ResolutionNode(NodeHandler):
             for step in steps:
                 rendered = render(step, ctx)
                 if rendered.startswith("### "):
+                    body_lines.append("")
                     body_lines.append(f"**{rendered[4:].strip()}**")
+                    body_lines.append("")
                     step_num = 1
                 else:
                     body_lines.append(f"{step_num}. {rendered}")

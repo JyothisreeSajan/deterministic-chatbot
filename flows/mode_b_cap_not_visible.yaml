@@ -182,7 +182,7 @@ nodes:
       - "Click on **View Profile** from the top-right menu."
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update your details and click **Send for Approval**."
-      - "The request will be sent to your **MDO Admin** for approval."
+      - "The request will be sent to your **MDO** for approval."
     next: closure_not_verified
 
   - id: closure_not_verified
@@ -577,7 +577,7 @@ nodes:
       - "Log in to iGOT Karmayogi."
       - "Click on the **Profile Icon** and select **View Profile**."
       - "Select **Make Transfer Request**, choose the correct Organization Name, and submit the request."
-      - "The request will be sent to the **MDO Admin** for approval. Once approved, please check if the Comprehensive Assessment Program (CAP) is visible."
+      - "The request will be sent to the **MDO** for approval. Once approved, please check if the Comprehensive Assessment Program (CAP) is visible."
     next: satisfied
 
   - id: guide_designation_update
@@ -592,7 +592,7 @@ nodes:
       - "Click on the **Profile Icon** and select **View Profile**."
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update your Designation and click **Send for Approval**."
-      - "Once submitted, the request will be sent to the **MDO Admin** for approval. Once approved, your designation will reflect in your profile, and you can check if the Comprehensive Assessment Program (CAP) is visible."
+      - "Once submitted, the request will be sent to the **MDO** for approval. Once approved, your designation will reflect in your profile, and you can check if the Comprehensive Assessment Program (CAP) is visible."
     next: satisfied
 
   - id: guide_profile_update
@@ -607,7 +607,7 @@ nodes:
       - "Click on the **Profile Icon** and select **View Profile**."
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update the incorrect fields and click **Send for Approval**."
-      - "Once submitted, the request will be sent to the **MDO Admin** for approval. Once approved, your details will reflect in your profile, and you can check if the Comprehensive Assessment Program (CAP) is visible."
+      - "Once submitted, the request will be sent to the **MDO** for approval. Once approved, your details will reflect in your profile, and you can check if the Comprehensive Assessment Program (CAP) is visible."
     next: satisfied
 
 
@@ -640,7 +640,7 @@ nodes:
   - id: mdo_api_error
     type: message
     prompt:
-      text: "We couldn't retrieve the MDO Admin details. Let me check for the KB point of contact for your organization."
+      text: "We couldn't retrieve the MDO details. Let me check for the KB point of contact for your organization."
     next: lookup_yp_contact
 
   - id: yp_found_result
@@ -658,7 +658,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        We couldn't retrieve the MDO Admin or KB point of contact details for your organization at this time.
+        We couldn't retrieve the MDO or KB point of contact details for your organization at this time.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -668,10 +668,10 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** CAP Not Visible — No MDO Admin or KB point of contact Found
+        **Issue Identified:** CAP Not Visible — No MDO or KB point of contact Found
 
         **Summary of Request:**
-        Your Comprehensive Assessment Program (CAP) is not visible, and we could not locate an MDO Admin or KB point of contact for your organization to help resolve this. You would like us to investigate this further.
+        Your Comprehensive Assessment Program (CAP) is not visible, and we could not locate an MDO or KB point of contact for your organization to help resolve this. You would like us to investigate this further.
 
         - **Organization:** {{ ctx.collected.org_name or ctx.collected.org_channel | default('Not identified') }}
 
@@ -743,7 +743,7 @@ nodes:
       text: |
         Our records indicate that you do not have any Comprehensive Assessment Programs (CAP) assigned to you at the moment.
 
-        If you believe this is an error and you should be assigned a CAP, please contact your MDO Admin.
+        If you believe this is an error and you should be assigned a CAP, please contact your MDO.
     next: lookup_mdo_admin
 
   - id: fetch_all_enrollments

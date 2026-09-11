@@ -274,12 +274,13 @@ nodes:
         request:
           filters:
             rootOrgId: "{{ ctx.collected.root_org_id }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",    to: collected.mdo_admin_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail", to: collected.mdo_admin_email }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_name,  transform: mdo_personal_name }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_email, transform: mdo_personal_email }
+      - { from: "$.response.content[*]", to: collected.mdo_role_type,   transform: mdo_role_type }
     on_success: branch_mdo_found_desig
     on_error:
       any: lookup_yp_contact
@@ -297,7 +298,7 @@ nodes:
       text: |
         **{{ ctx.collected.designation_selected_name }}** is available in the iGOT master data but has **not been imported** by your MDO yet.
 
-        Please reach out to your MDO admin and request them to import the designation. Once imported through the MDO portal, it will be available for you to select.
+        Please reach out to your MDO and request them to import the designation. Once imported through the MDO portal, it will be available for you to select.
 
         {% if ctx.collected.mdo_admin_name %}
         - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
@@ -417,8 +418,8 @@ nodes:
         Your email domain may not be in the **approved list** for iGOT registration. Only official government email domains are permitted.
     steps:
       - "Ensure you are using an official government email ID (e.g. **.gov.in**, **.nic.in**, **.ac.in**)."
-      - "If your organisation uses a different domain, your **MDO admin** can request domain whitelisting."
-      - "Contact your MDO admin and share your email domain for approval."
+      - "If your organisation uses a different domain, your **MDO** can request domain whitelisting."
+      - "Contact your MDO and share your email domain for approval."
       - "Once the domain is whitelisted, retry the Email ID update."
     next: satisfied
 
@@ -448,12 +449,13 @@ nodes:
         request:
           filters:
             rootOrgId: "{{ ctx.collected.root_org_id }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",    to: collected.mdo_admin_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail", to: collected.mdo_admin_email }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_name,  transform: mdo_personal_name }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_email, transform: mdo_personal_email }
+      - { from: "$.response.content[*]", to: collected.mdo_role_type,   transform: mdo_role_type }
     on_success: branch_mdo_found_email
     on_error:
       any: lookup_yp_contact
@@ -471,7 +473,7 @@ nodes:
       text: |
         OTP verification is mandatory to update Email ID / Mobile Number. Without OTP, the update cannot be completed directly.
 
-        Please contact your MDO admin who can perform the update on your behalf:
+        Please contact your MDO who can perform the update on your behalf:
         {% if ctx.collected.mdo_admin_name %}
         - **MDO Name:** {{ ctx.collected.mdo_admin_name }}
         {% endif %}
@@ -669,12 +671,13 @@ nodes:
         request:
           filters:
             rootOrgId: "{{ ctx.collected.root_org_id }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",    to: collected.mdo_admin_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail", to: collected.mdo_admin_email }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_name,  transform: mdo_personal_name }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_email, transform: mdo_personal_email }
+      - { from: "$.response.content[*]", to: collected.mdo_role_type,   transform: mdo_role_type }
     on_success: branch_mdo_found_ehrms
     on_error:
       any: lookup_yp_contact
@@ -782,12 +785,13 @@ nodes:
         request:
           filters:
             rootOrgId: "{{ ctx.collected.root_org_id }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",    to: collected.mdo_admin_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail", to: collected.mdo_admin_email }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_name,  transform: mdo_personal_name }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_email, transform: mdo_personal_email }
+      - { from: "$.response.content[*]", to: collected.mdo_role_type,   transform: mdo_role_type }
     on_success: branch_mdo_found_retirement
     on_error:
       any: lookup_yp_contact
@@ -1060,12 +1064,13 @@ nodes:
         request:
           filters:
             rootOrgId: "{{ ctx.collected.root_org_id }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",    to: collected.mdo_admin_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail", to: collected.mdo_admin_email }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_name,  transform: mdo_personal_name }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_email, transform: mdo_personal_email }
+      - { from: "$.response.content[*]", to: collected.mdo_role_type,   transform: mdo_role_type }
     on_success: branch_mdo_found_svc_history
     on_error:
       any: lookup_yp_contact
@@ -1319,12 +1324,12 @@ nodes:
   - id: show_username_tick_steps
     type: resolution
     prompt:
-      text: "Your **Username Verification Tick** is missing. This appears once your MDO admin verifies your profile."
+      text: "Your **Username Verification Tick** is missing. This appears once your MDO verifies your profile."
     steps:
       - "Go to **View Profile → Primary Details → Edit ✏️**."
       - "Ensure **Group** and **Designation** are filled in and saved."
-      - "Once primary details are complete, your MDO admin verifies your profile — the tick appears automatically."
-      - "If it has been more than **2 working days**, contact your MDO admin directly."
+      - "Once primary details are complete, your MDO verifies your profile — the tick appears automatically."
+      - "If it has been more than **2 working days**, contact your MDO directly."
     follow_up:
       text: "Has it been more than 2 working days without the tick appearing?"
       quick_replies:
@@ -1346,12 +1351,13 @@ nodes:
         request:
           filters:
             rootOrgId: "{{ ctx.collected.root_org_id }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",    to: collected.mdo_admin_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail", to: collected.mdo_admin_email }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_name,  transform: mdo_personal_name }
+      - { from: "$.response.content[*]", to: collected.mdo_admin_email, transform: mdo_personal_email }
+      - { from: "$.response.content[*]", to: collected.mdo_role_type,   transform: mdo_role_type }
     on_success: branch_mdo_found_tick
     on_error:
       any: lookup_yp_contact
@@ -1367,7 +1373,7 @@ nodes:
     type: message
     prompt:
       text: |
-        Since it has been more than **2 working days**, please contact your **MDO Admin** directly and request them to verify your profile.
+        Since it has been more than **2 working days**, please contact your **MDO** directly and request them to verify your profile.
 
         Here are your MDO's contact details:
         {% if ctx.collected.mdo_admin_name %}
@@ -1592,7 +1598,7 @@ nodes:
     type: message
     prompt:
       text: |
-        Since the MDO Admin for your organisation isn't currently available in the system, please contact the concerned **KB point of contact** for further assistance:
+        Since the MDO for your organisation isn't currently available in the system, please contact the concerned **KB point of contact** for further assistance:
 
         - **Name:** {{ ctx.collected.yp_name }}
         - **Email ID:** {{ ctx.collected.yp_email }}
@@ -1602,7 +1608,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        We checked, and found that there is currently no MDO Admin or KB point of contact available for your organisation to assist with this request.
+        We checked, and found that there is currently no MDO or KB point of contact available for your organisation to assist with this request.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -1615,7 +1621,7 @@ nodes:
         **Issue Identified:** Profile Update — No Admin or KB point of contact Found
 
         **Summary of Request:**
-        You reported a profile update issue, but there is currently no MDO Admin available to assist, and we could not locate a KB point of contact for your organisation either. You would like us to investigate this further.
+        You reported a profile update issue, but there is currently no MDO available to assist, and we could not locate a KB point of contact for your organisation either. You would like us to investigate this further.
 
         - **Organisation:** {{ ctx.collected.org_channel | default('Not identified') }}
 

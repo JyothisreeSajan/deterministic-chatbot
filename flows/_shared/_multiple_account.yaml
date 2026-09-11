@@ -174,30 +174,35 @@ nodes:
         request:
           filters:
             channel: "{{ ctx.collected.org_channel }}"
-            organisations.roles: ["MDO_LEADER"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
       - { from: "$.response.count", to: collected.mdo_leader_count }
       - {
-          from: "$.response.content[0].profileDetails.personalDetails.firstname",
+          from: "$.response.content[*]",
           to: collected.mdo_leader_name,
+          transform: mdo_personal_name,
         }
       - {
-          from: "$.response.content[0].profileDetails.personalDetails.surname",
+          from: "$.response.content[*]",
           to: collected.mdo_leader_surname,
+          transform: mdo_personal_surname,
         }
       - {
-          from: "$.response.content[0].profileDetails.personalDetails.primaryEmail",
+          from: "$.response.content[*]",
           to: collected.mdo_leader_email,
+          transform: mdo_personal_email,
         }
       - {
-          from: "$.response.content[0].firstName",
+          from: "$.response.content[*]",
           to: collected.mdo_leader_name_fallback,
+          transform: mdo_top_level_name,
         }
       - {
-          from: "$.response.content[0].email",
-          to: collected.mdo_leader_email_fallback,
+          from: "$.response.content[*]",
+          to: collected.mdo_role_type,
+          transform: mdo_role_type,
         }
     on_success: branch_domain_invalid_mdo_found
     on_error:
@@ -208,10 +213,12 @@ nodes:
     type: branch
     rules:
       - {
-          if: "ctx.collected.mdo_leader_count != None and ctx.collected.mdo_leader_count > 0",
+          if: "ctx.collected.mdo_leader_count != None and ctx.collected.mdo_leader_count > 0 and ctx.collected.mdo_leader_email",
           then: domain_invalid_show_mdo,
         }
     default: lookup_yp_contact
+    # count = 0, empty content, or only a masked top-level email fallback
+    # (no usable personalDetails.primaryEmail) → Global Rule: look up YP
 
   - id: domain_invalid_show_mdo
     type: message
@@ -219,10 +226,10 @@ nodes:
       text: |
         The Email ID **{{ ctx.collected.new_identifier }}** cannot be updated because its domain is **not whitelisted** on the iGOT Karmayogi platform.
 
-        Please contact your **MDO Leader** for further clarification and to request domain addition:
+        Please contact your **MDO** for further clarification and to request domain addition:
 
         👤 **{{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}{{ (' ' ~ ctx.collected.mdo_leader_surname) if ctx.collected.mdo_leader_surname else '' }}**
-        📧 {{ ctx.collected.mdo_leader_email or ctx.collected.mdo_leader_email_fallback }}
+        📧 {{ ctx.collected.mdo_leader_email }}
     next: satisfied
 
   # ---------------------------------------------------------------------------
@@ -296,7 +303,7 @@ nodes:
       text: |
         The Email ID **{{ ctx.collected.new_identifier }}** cannot be updated because its domain is **not whitelisted** on the iGOT Karmayogi platform.
 
-        Please contact your **MDO Leader** or the **KB point of contact** assigned to your organisation for further assistance.
+        Please contact your **MDO** or the **KB point of contact** assigned to your organisation for further assistance.
     next: satisfied
 
   # ===========================================================================
@@ -465,30 +472,35 @@ nodes:
         request:
           filters:
             channel: "{{ ctx.collected.org_channel }}"
-            organisations.roles: ["MDO_LEADER"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
       - { from: "$.response.count", to: collected.mdo_leader_count }
       - {
-          from: "$.response.content[0].profileDetails.personalDetails.firstname",
+          from: "$.response.content[*]",
           to: collected.mdo_leader_name,
+          transform: mdo_personal_name,
         }
       - {
-          from: "$.response.content[0].profileDetails.personalDetails.surname",
+          from: "$.response.content[*]",
           to: collected.mdo_leader_surname,
+          transform: mdo_personal_surname,
         }
       - {
-          from: "$.response.content[0].profileDetails.personalDetails.primaryEmail",
+          from: "$.response.content[*]",
           to: collected.mdo_leader_email,
+          transform: mdo_personal_email,
         }
       - {
-          from: "$.response.content[0].firstName",
+          from: "$.response.content[*]",
           to: collected.mdo_leader_name_fallback,
+          transform: mdo_top_level_name,
         }
       - {
-          from: "$.response.content[0].email",
-          to: collected.mdo_leader_email_fallback,
+          from: "$.response.content[*]",
+          to: collected.mdo_role_type,
+          transform: mdo_role_type,
         }
     on_success: branch_otp_mdo_found
     on_error:
@@ -499,10 +511,12 @@ nodes:
     type: branch
     rules:
       - {
-          if: "ctx.collected.mdo_leader_count != None and ctx.collected.mdo_leader_count > 0",
+          if: "ctx.collected.mdo_leader_count != None and ctx.collected.mdo_leader_count > 0 and ctx.collected.mdo_leader_email",
           then: otp_show_mdo_contact,
         }
     default: otp_yp_data_lookup
+    # count = 0, empty content, or only a masked top-level email fallback
+    # (no usable personalDetails.primaryEmail) → Global Rule: look up YP
 
   - id: otp_show_mdo_contact
     type: message
@@ -511,7 +525,7 @@ nodes:
         If you're not receiving the OTP, please connect with the contact below for further assistance:
 
         👤 **{{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}{{ (' ' ~ ctx.collected.mdo_leader_surname) if ctx.collected.mdo_leader_surname else '' }}**
-        📧 {{ ctx.collected.mdo_leader_email or ctx.collected.mdo_leader_email_fallback }}
+        📧 {{ ctx.collected.mdo_leader_email }}
     next: satisfied
 
   # Inline YP lookup scoped to the OTP-not-received sub-flow.
@@ -544,7 +558,7 @@ nodes:
     type: message
     prompt:
       text: |
-        If you're not receiving the OTP, please contact the **KB point of contact** or **MDO Leader** assigned to your organisation for further assistance.
+        If you're not receiving the OTP, please contact the **KB point of contact** or **MDO** assigned to your organisation for further assistance.
     next: satisfied
 
   # ===========================================================================

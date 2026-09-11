@@ -2447,6 +2447,68 @@ def _nested_cap_incomplete_courses(cap_content: Any, all_enrollment_list: Any) -
     return result
 
 
+def _mdo_entry_has_role(entry: Any, role: str) -> bool:
+    if not isinstance(entry, dict):
+        return False
+    for org in entry.get("organisations") or []:
+        if isinstance(org, dict) and role in (org.get("roles") or []):
+            return True
+    return False
+
+
+def _mdo_role_priority_entry(content_list: Any) -> dict | None:
+    """Pick the content[] entry with an MDO_LEADER role; fall back to MDO_ADMIN.
+
+    The search call filters on both roles at once (backend OR-matches
+    organisations.roles), with no guaranteed leader-vs-admin ordering in the
+    response, so leader-over-admin priority is resolved here client-side.
+    """
+    if not isinstance(content_list, list):
+        return None
+    leader = next((e for e in content_list if _mdo_entry_has_role(e, "MDO_LEADER")), None)
+    if leader is not None:
+        return leader
+    return next((e for e in content_list if _mdo_entry_has_role(e, "MDO_ADMIN")), None)
+
+
+def _mdo_role_type(content_list: Any) -> str | None:
+    entry = _mdo_role_priority_entry(content_list)
+    if entry is None:
+        return None
+    return "MDO_LEADER" if _mdo_entry_has_role(entry, "MDO_LEADER") else "MDO_ADMIN"
+
+
+def _mdo_personal_name(content_list: Any) -> str | None:
+    entry = _mdo_role_priority_entry(content_list)
+    if entry is None:
+        return None
+    return ((entry.get("profileDetails") or {}).get("personalDetails") or {}).get("firstname")
+
+
+def _mdo_personal_surname(content_list: Any) -> str | None:
+    entry = _mdo_role_priority_entry(content_list)
+    if entry is None:
+        return None
+    return ((entry.get("profileDetails") or {}).get("personalDetails") or {}).get("surname")
+
+
+def _mdo_personal_email(content_list: Any) -> str | None:
+    entry = _mdo_role_priority_entry(content_list)
+    if entry is None:
+        return None
+    return ((entry.get("profileDetails") or {}).get("personalDetails") or {}).get("primaryEmail")
+
+
+def _mdo_top_level_name(content_list: Any) -> str | None:
+    entry = _mdo_role_priority_entry(content_list)
+    return entry.get("firstName") if entry else None
+
+
+def _mdo_top_level_email(content_list: Any) -> str | None:
+    entry = _mdo_role_priority_entry(content_list)
+    return entry.get("email") if entry else None
+
+
 # Registry of named transforms usable in YAML response_mapping `transform:` field.
 _TRANSFORMS: dict[str, Any] = {
     "extract_cap_pending_resources":   _extract_cap_pending_resources,
@@ -2545,6 +2607,15 @@ _TRANSFORMS: dict[str, Any] = {
     "nested_apar_courses":      _nested_apar_courses,
     "nested_non_apar_courses":  _nested_non_apar_courses,
     "sort_caps_by_end_date":    _sort_caps_by_end_date,
+    # MDO lookup — leader-over-admin priority resolution when a single search
+    # call filters on both MDO_LEADER and MDO_ADMIN roles (see mode_b_*.yaml
+    # flows and flows/_shared/_mdo_admin_lookup.yaml).
+    "mdo_role_type":        _mdo_role_type,
+    "mdo_personal_name":    _mdo_personal_name,
+    "mdo_personal_surname": _mdo_personal_surname,
+    "mdo_personal_email":   _mdo_personal_email,
+    "mdo_top_level_name":   _mdo_top_level_name,
+    "mdo_top_level_email":  _mdo_top_level_email,
 }
 
 

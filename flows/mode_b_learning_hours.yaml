@@ -297,10 +297,10 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Learning Hours Not Reflecting — No MDO Admin Mapped to Organization
+        **Issue Identified:** Learning Hours Not Reflecting — No MDO Mapped to Organization
 
         **Summary of Request:**
-        You reported that your learning progress is not reflecting, but no MDO Admin could be located for your organization to help resolve this. You would like us to investigate this further.
+        You reported that your learning progress is not reflecting, but no MDO could be located for your organization to help resolve this. You would like us to investigate this further.
 
         - **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 
@@ -453,7 +453,7 @@ nodes:
       - "Select the **Correct Organization Name** from the dropdown."
       - "Choose your **Group** and **Designation** (if applicable)."
       - "Ensure all details are accurate and click **Submit**."
-      - "Your request will be sent to the concerned MDO Admin for approval."
+      - "Your request will be sent to the concerned MDO for approval."
       - "Once approved, please recheck the APAR / Training Plan section on your profile."
     next: satisfied
 
@@ -537,7 +537,7 @@ nodes:
     steps:
       - "Log in to **iGOT Karmayogi** → **View Profile** → **Make Transfer Request**."
       - "Select the correct organization, group, and designation."
-      - "Click **Submit** — the request goes to MDO Admin for approval."
+      - "Click **Submit** — the request goes to the MDO for approval."
       - "Once approved, recheck the APAR/Training Plan section."
     next: sp_profile_update_closure
 
@@ -549,7 +549,7 @@ nodes:
       - "Log in to **iGOT Karmayogi** → **View Profile**."
       - "Navigate to **Primary Details** → click the ✏️ **Edit** icon."
       - "Update the correct **Designation** and click **Send for Approval**."
-      - "Once the MDO Admin approves, recheck the APAR section."
+      - "Once the MDO approves, recheck the APAR section."
     next: sp_profile_update_closure
 
   - id: sp_guide_profile_update
@@ -560,7 +560,7 @@ nodes:
       - "Log in to **iGOT Karmayogi** → **View Profile**."
       - "Navigate to **Primary Details** → click the ✏️ **Edit** icon."
       - "Update the correct **Group** and any other required details."
-      - "Click **Send for Approval** — the MDO Admin will review the request."
+      - "Click **Send for Approval** — the MDO will review the request."
       - "Once approved, recheck the APAR section."
     next: sp_profile_update_closure
 
@@ -892,8 +892,8 @@ nodes:
       - "Navigate to **Primary Details** → click the ✏️ **Edit** icon."
       - "Update the correct **Group**, **Designation**, and **Ministry / Department**."
       - "Click **Send for Approval** to submit the changes."
-      - "The request will be sent to your **MDO Admin** for approval."
-      - "Your profile will be verified once the MDO Admin approves the request."
+      - "The request will be sent to your **MDO** for approval."
+      - "Your profile will be verified once the MDO approves the request."
     next: sp_guide_profile_verification_closure
 
   - id: sp_guide_profile_verification_closure

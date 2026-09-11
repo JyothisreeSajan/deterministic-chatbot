@@ -237,11 +237,11 @@ nodes:
       text: |
         Your designation/group verification request has already been submitted and is awaiting approval from the MDO.
 
-        Please contact the below admin for further assistance:
+        Please contact the below MDO for further assistance:
 
-        - **Admin Name:** {{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}
+        - **MDO Name:** {{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}
 
-        - **Admin Email ID:** {{ ctx.collected.mdo_leader_email }}
+        - **MDO Email:** {{ ctx.collected.mdo_leader_email }}
     next: satisfied
 
   # ---------------------------------------------------------------------------
@@ -279,7 +279,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Designation / Group Verification — No Admin or KB point of contact Found
+        **Issue Identified:** Designation / Group Verification — No MDO or KB point of contact Found
 
         **Summary of Request:**
         Your designation/group verification request has already been submitted, but there is currently no MDO available to approve it, and we could not locate a KB point of contact for your organization either. You would like us to investigate this further.

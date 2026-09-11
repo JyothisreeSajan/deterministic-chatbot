@@ -1618,7 +1618,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Profile Update — No Admin or KB point of contact Found
+        **Issue Identified:** Profile Update — No MDO or KB point of contact Found
 
         **Summary of Request:**
         You reported a profile update issue, but there is currently no MDO available to assist, and we could not locate a KB point of contact for your organisation either. You would like us to investigate this further.

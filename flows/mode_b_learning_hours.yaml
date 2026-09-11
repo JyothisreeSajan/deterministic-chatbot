@@ -265,7 +265,7 @@ nodes:
 
         - **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
 
-        - **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email | default('—') }}
 
         Once the eHRMS ID is updated, it may take up to **24 hours** for the learning progress to reflect in eHRMS.
     next: satisfied
@@ -277,7 +277,7 @@ nodes:
       text: |
         We checked, and found that your **eHRMS ID** is available; however, the **External System Name** is not updated in the system.
 
-        The External System Name is mandatory for synchronization with eHRMS and can only be updated by the **MDO / Administrator**.
+        The External System Name is mandatory for synchronization with eHRMS and can only be updated by the **MDO of your organization**.
 
         Please connect with the MDO below and request them to update the External System Name:
 
@@ -285,7 +285,7 @@ nodes:
 
         - **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
 
-        - **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email | default('—') }}
 
         Once the External System Name is updated, it may take up to **24 hours** for the learning progress to reflect in eHRMS.
     next: satisfied
@@ -818,7 +818,7 @@ nodes:
 
         - **MDO Name:** {{ ctx.collected.mdo_admin_name | default('—') }}
 
-        - **MDO Email ID:** {{ ctx.collected.mdo_admin_email | default('—') }}
+        - **MDO Email:** {{ ctx.collected.mdo_admin_email | default('—') }}
 
         Only APAR-assigned and successfully completed courses/assessments are reflected in SPARROW/APAR.
     next: satisfied

@@ -191,13 +191,14 @@ nodes:
             # Always search for MDO in the organisation the transfer request was raised to.
             # If the ID was missing in the transfer request, use the one we just fetched.
             rootOrgId: "{{ ctx.collected.fetched_root_org_id or ctx.collected.transfer_root_org_id or ctx.collected.transfer_org_id or ctx.collected.transfer_organisation_id or '' }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.count",                                               to: collected.mdo_admin_count }
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",    to: collected.mdo_admin_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail", to: collected.mdo_admin_email }
+      - { from: "$.response.count",       to: collected.mdo_admin_count }
+      - { from: "$.response.content[*]",  to: collected.mdo_admin_name,  transform: mdo_personal_name }
+      - { from: "$.response.content[*]",  to: collected.mdo_admin_email, transform: mdo_personal_email }
+      - { from: "$.response.content[*]",  to: collected.mdo_role_type,   transform: mdo_role_type }
     on_success: branch_on_mdo_found
     on_error:
       any: start_yp_lookup  # Fallback to YP lookup if API fails
@@ -213,15 +214,15 @@ nodes:
     type: resolution
     prompt:
       text: |
-        ✅ **MDO Admin Contact Information**
+        ✅ **MDO Contact Information**
 
-        We've identified the MDO Admin for the **{{ ctx.collected.transfer_org_name or ctx.collected.transfer_dept_name or ctx.collected.fetched_org_name or ctx.collected.profile_org_name }}** organization.
+        We've identified the MDO for the **{{ ctx.collected.transfer_org_name or ctx.collected.transfer_dept_name or ctx.collected.fetched_org_name or ctx.collected.profile_org_name }}** organization.
         
         **Contact Details:**
-        - **Name:** {{ ctx.collected.mdo_admin_name or "MDO Admin" }}
+        - **Name:** {{ ctx.collected.mdo_admin_name or "MDO" }}
         - **Email:** {{ ctx.collected.mdo_admin_email or "Contact the organization directly" }}
     steps:
-      - "Connect with the MDO Admin using the contact information above."
+      - "Connect with the MDO using the contact information above."
       - "Request them to review and approve your transfer request."
       - "Your access will be restored once your request is approved."
     next: satisfied
@@ -242,7 +243,7 @@ nodes:
       - "Once cancelled, click **Make Transfer Request** again."
       - "Select the **correct organization name** from the dropdown."
       - "Ensure all details (Group, Designation) are accurate."
-      - "Click **Submit**. Your new request will be sent to the MDO Admin for approval."
+      - "Click **Submit**. Your new request will be sent to the MDO for approval."
     next: satisfied
 
   # ===========================================================================
@@ -263,8 +264,8 @@ nodes:
       - "Select the **Correct Organization Name** from the dropdown."
       - "Choose **Group** and **Designation** (if applicable)."
       - "Ensure all details are accurate and click **Submit**."
-      - "Your request will be sent to the concerned MDO Admin for approval."
-      - "Access will be restored once the MDO Admin approves the request."
+      - "Your request will be sent to the concerned MDO for approval."
+      - "Access will be restored once the MDO approves the request."
     follow_up:
       text: "Are you facing any issues raising the request?"
       quick_replies:
@@ -665,7 +666,7 @@ nodes:
         - **Name:** {{ ctx.collected.yp_name or "KB point of contact" }}
         - **Email:** {{ ctx.collected.yp_email or "N/A" }}
     steps:
-      - "Coordinate with the SPOC for the creation of an MDO Leader/Admin."
+      - "Coordinate with the SPOC for the creation of an MDO."
       - "Request approval-related support for your transfer request."
     next: satisfied
 
@@ -697,7 +698,7 @@ nodes:
         **Issue Identified:** Access Revoked — No MDO/KB point of Contact Found
 
         **Summary of Request:**
-        You reported that your access was revoked and you need help raising a transfer request, but no MDO Admin or KB point of contact could be located for your organization. You would like us to investigate this further.
+        You reported that your access was revoked and you need help raising a transfer request, but no MDO or KB point of contact could be located for your organization. You would like us to investigate this further.
 
         - **Organization/Ministry/State:** {{ ctx.collected.dropdown_org_name or ctx.collected.transfer_org_name or ctx.collected.selected_parent_name or ctx.collected.fetched_org_name or 'Not identified' }}
 

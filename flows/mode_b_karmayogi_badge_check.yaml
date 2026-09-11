@@ -201,16 +201,16 @@ nodes:
           query: ""
           filters:
             channel: "{{ ctx.collected.designation_dept_name or ctx.collected.group_dept_name }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.count",                                                          to: collected.mdo_leader_count }
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",            to: collected.mdo_leader_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.surname",              to: collected.mdo_leader_surname }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail",         to: collected.mdo_leader_email }
-      - { from: "$.response.content[0].firstName",                                           to: collected.mdo_leader_name_fallback }
-      - { from: "$.response.content[0].email",                                               to: collected.mdo_leader_email_fallback }
+      - { from: "$.response.count",       to: collected.mdo_leader_count }
+      - { from: "$.response.content[*]",  to: collected.mdo_leader_name,           transform: mdo_personal_name }
+      - { from: "$.response.content[*]",  to: collected.mdo_leader_surname,        transform: mdo_personal_surname }
+      - { from: "$.response.content[*]",  to: collected.mdo_leader_email,          transform: mdo_personal_email }
+      - { from: "$.response.content[*]",  to: collected.mdo_leader_name_fallback,  transform: mdo_top_level_name }
+      - { from: "$.response.content[*]",  to: collected.mdo_role_type,            transform: mdo_role_type }
     on_success: branch_mdo_leader_found
     on_error:
       # 401 / 403 / 404 / any → treat as not found per API doc
@@ -220,10 +220,11 @@ nodes:
   - id: branch_mdo_leader_found
     type: branch
     rules:
-      - if: "ctx.collected.mdo_leader_count != None and ctx.collected.mdo_leader_count > 0"
+      - if: "ctx.collected.mdo_leader_count != None and ctx.collected.mdo_leader_count > 0 and ctx.collected.mdo_leader_email"
         then: show_admin_contact
     default: lookup_yp_contact
-    # count = 0 or empty content → Global Rule: look up YP
+    # count = 0, empty content, or only a masked top-level email fallback
+    # (no usable personalDetails.primaryEmail) → Global Rule: look up YP
 
   # ---------------------------------------------------------------------------
   # §1.1.1 — MDO Leader / Org Admin present
@@ -233,13 +234,13 @@ nodes:
     type: message
     prompt:
       text: |
-        Your designation/group verification request has already been submitted and is awaiting approval from the MDO Admin.
+        Your designation/group verification request has already been submitted and is awaiting approval from the MDO.
 
-        Please contact the below admin for further assistance:
+        Please contact the below MDO for further assistance:
 
-        - **Admin Name:** {{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}
+        - **MDO Name:** {{ ctx.collected.mdo_leader_name or ctx.collected.mdo_leader_name_fallback }}
 
-        - **Admin Email ID:** {{ ctx.collected.mdo_leader_email or ctx.collected.mdo_leader_email_fallback }}
+        - **MDO Email:** {{ ctx.collected.mdo_leader_email }}
     next: satisfied
 
   # ---------------------------------------------------------------------------
@@ -254,7 +255,7 @@ nodes:
     type: message
     prompt:
       text: |
-        Your designation/group verification request has already been submitted. However, there is currently no MDO Admin available to approve the request.
+        Your designation/group verification request has already been submitted. However, there is currently no MDO available to approve the request.
 
         Please connect with the concerned KB point of contact for further assistance.
 
@@ -267,7 +268,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        We checked, and found that your designation/group verification request has already been submitted, but there is currently no MDO Admin or KB point of contact available for your organization to assist with approval.
+        We checked, and found that your designation/group verification request has already been submitted, but there is currently no MDO or KB point of contact available for your organization to assist with approval.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -277,10 +278,10 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Designation / Group Verification — No Admin or KB point of Contact Found
+        **Issue Identified:** Designation / Group Verification — No MDO or KB point of Contact Found
 
         **Summary of Request:**
-        Your designation/group verification request has already been submitted, but there is currently no MDO Admin available to approve it, and we could not locate a KB point of contact for your organization either. You would like us to investigate this further.
+        Your designation/group verification request has already been submitted, but there is currently no MDO available to approve it, and we could not locate a KB point of contact for your organization either. You would like us to investigate this further.
 
         - **Organization:** {{ ctx.collected.org_channel | default('Not identified') }}
 
@@ -322,5 +323,5 @@ nodes:
       - "Navigate to Primary Details and click the Edit icon."
       - "Update the correct Group and Designation."
       - "Click Send for Approval."
-      - "Once the request is submitted, it will be sent to the MDO Admin for approval. The designation or group will reflect in your profile after approval."
+      - "Once the request is submitted, it will be sent to the MDO for approval. The designation or group will reflect in your profile after approval."
     next: satisfied

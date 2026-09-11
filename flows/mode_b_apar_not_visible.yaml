@@ -457,7 +457,7 @@ nodes:
       - "Select the **Correct Organization Name** from the dropdown."
       - "Choose your **Group** and **Designation** (if applicable)."
       - "Ensure all details are accurate and click **Submit**."
-      - "Your request will be sent to the concerned MDO Admin for approval."
+      - "Your request will be sent to the concerned MDO for approval."
       - "Once approved, please recheck the APAR / Training Plan section on your profile."
     next: satisfied
 
@@ -500,8 +500,8 @@ nodes:
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update the correct **Group**, **Designation**, and **Ministry / Department**."
       - "Click **Send for Approval** to submit the changes."
-      - "The request will be sent to your **MDO Admin** for approval."
-      - "Your profile will be verified once the MDO Admin approves the request."
+      - "The request will be sent to your **MDO** for approval."
+      - "Your profile will be verified once the MDO approves the request."
     next: guide_profile_verification_closure
 
   # SOP Step 7.3.2 — Closure message (no user input)
@@ -588,7 +588,7 @@ nodes:
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update the correct **Designation**."
       - "Click **Send for Approval** to submit the changes."
-      - "The request will be sent to your **MDO Admin** for approval."
+      - "The request will be sent to your **MDO** for approval."
       - "Once approved, kindly recheck the APAR / Training Plan section on your profile."
     next: satisfied
 
@@ -606,7 +606,7 @@ nodes:
       - "Navigate to **Primary Details** and click the ✏️ **Edit icon**."
       - "Update the correct **Group** and any other required details."
       - "Click **Send for Approval** to submit the changes."
-      - "The request will be sent to your **MDO Admin** for approval."
+      - "The request will be sent to your **MDO** for approval."
       - "Once approved, kindly recheck the APAR / Training Plan section on your profile."
     next: satisfied
 
@@ -678,7 +678,7 @@ nodes:
   - id: mdo_api_error
     type: message
     prompt:
-      text: "We couldn't retrieve the MDO Admin details. Let me check for the KB point of contact for your organization."
+      text: "We couldn't retrieve the MDO details. Let me check for the KB point of contact for your organization."
     next: lookup_yp_contact
 
   - id: show_mdo_contact
@@ -727,7 +727,7 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        We couldn't retrieve the MDO Admin or KB point of contact details for your organization at this time.
+        We couldn't retrieve the MDO or KB point of contact details for your organization at this time.
 
         This needs further investigation from our support team. Would you like us to create a support ticket for this issue?
     on_confirm: yp_not_found_ticket_summary
@@ -737,10 +737,10 @@ nodes:
     type: ticket_confirm
     prompt:
       text: |
-        **Issue Identified:** Training Plan / APAR Not Visible — No MDO Admin or KB point of contact Found
+        **Issue Identified:** Training Plan / APAR Not Visible — No MDO or KB point of contact Found
 
         **Summary of Request:**
-        Your training plan/APAR courses are not visible, and we could not locate an MDO Admin or KB point of contact for your organization to help resolve this. You would like us to investigate this further.
+        Your training plan/APAR courses are not visible, and we could not locate an MDO or KB point of contact for your organization to help resolve this. You would like us to investigate this further.
 
         - **Organization:** {{ ctx.collected.org_name or ctx.collected.org_channel | default('Not identified') }}
 
@@ -779,7 +779,7 @@ nodes:
       text: |
         We couldn't verify your organization / MDO details at this time.
 
-        Please reach out to your MDO Admin or concerned authority for further assistance regarding your training plan.
+        Please reach out to your MDO or concerned authority for further assistance regarding your training plan.
     next: satisfied
 
   # ===========================================================================

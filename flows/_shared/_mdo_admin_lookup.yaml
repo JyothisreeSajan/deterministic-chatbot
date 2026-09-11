@@ -1,13 +1,18 @@
 fragment_id: mdo_admin_lookup
-# Looks up the MDO admin (MDO_ADMIN role) for the user's organisation.
+# Looks up the MDO contact for the user's organisation — prefers MDO_LEADER,
+# falls back to MDO_ADMIN when no leader is found. A single search call filters
+# on both roles at once (backend OR-matches organisations.roles); leader-over-
+# admin priority is then resolved client-side via the mdo_* transforms since
+# the API gives no ordering guarantee between the two roles.
 #
 # Prerequisites — must be in collected before this fragment runs:
 #   collected.root_org_id   : rootOrgId from profile read (use _karmayogi_user first)
 #
 # Fields stored:
-#   collected.mdo_admin_name   : admin first name (or "" if not found)
-#   collected.mdo_admin_email  : admin primary email (or "" if not found)
-#   collected.mdo_admin_count  : number of admins found (0 = use YP fallback)
+#   collected.mdo_admin_name   : contact first name (or None if not found)
+#   collected.mdo_admin_email  : contact primary email (or None if not found)
+#   collected.mdo_admin_count  : number of leader/admin matches found (0 = use YP fallback)
+#   collected.mdo_role_type    : "MDO_LEADER" | "MDO_ADMIN" | None — which role matched
 #
 # The flow that imports this fragment MUST define:
 #   - mdo_found_result    (on_success target — branch on mdo_admin_count)
@@ -24,13 +29,14 @@ nodes:
         request:
           filters:
             rootOrgId: "{{ ctx.collected.root_org_id }}"
-            organisations.roles: ["MDO_ADMIN"]
+            organisations.roles: ["MDO_LEADER", "MDO_ADMIN"]
             status: 1
-          limit: 1
+          limit: 10
     response_mapping:
-      - { from: "$.response.count",                                                    to: collected.mdo_admin_count }
-      - { from: "$.response.content[0].profileDetails.personalDetails.firstname",      to: collected.mdo_admin_name }
-      - { from: "$.response.content[0].profileDetails.personalDetails.primaryEmail",   to: collected.mdo_admin_email }
+      - { from: "$.response.count",       to: collected.mdo_admin_count }
+      - { from: "$.response.content[*]",  to: collected.mdo_admin_name,  transform: mdo_personal_name }
+      - { from: "$.response.content[*]",  to: collected.mdo_admin_email, transform: mdo_personal_email }
+      - { from: "$.response.content[*]",  to: collected.mdo_role_type,   transform: mdo_role_type }
     on_success: mdo_found_result
     on_error:
       any: mdo_api_error
